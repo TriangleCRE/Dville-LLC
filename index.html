@@ -109,6 +109,7 @@ main{flex:1; min-width:0; padding:22px 26px 90px; max-width:1420px}
 .page-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:16px; flex-wrap:wrap}
 .page-head h2{font-size:21px}
 .page-head .sub{color:var(--muted); font-size:13px; margin-top:4px; max-width:78ch}
+.page-head-actions{display:flex; gap:8px; align-items:center; flex:0 0 auto}
 .card{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh)}
 .card-h{padding:13px 16px; border-bottom:1px solid var(--line-2); display:flex; align-items:center; gap:10px; flex-wrap:wrap}
 .card-h h3{font-size:14.5px}
@@ -1592,7 +1593,7 @@ function vActions(){
       <h2>Action items</h2>
       <div class="sub">Every task pulled out of the notes, the call, the campaign plan and the email threads — with who owns it, when it's due, and where it came from. Click any row to open and edit it.</div>
     </div>
-    <button class="btn btn-p" data-new="action">+ New action item</button>
+    <div class="page-head-actions">${xlsxDlBtn()}<button class="btn btn-p" data-new="action">+ New action item</button></div>
   </div>
   ${f.special?`<div class="callout ${f.special==="overdue"?"red":"warn"}" style="margin-bottom:12px">Showing ${f.special==="overdue"?"<b>overdue</b> items only":"items <b>due in the next 14 days</b>"}. <a href="#" data-clear="actions" style="font-weight:600">Show everything</a></div>`:""}
   <div class="toolbar">
@@ -1724,7 +1725,7 @@ function vQuestions(){
       <h2>Open questions</h2>
       <div class="sub">Everything unresolved, and who owes the answer. Anything marked <b>CubeSmart Revenue Mgmt</b> can't be settled until the store onboards — but it should be on the agenda for week one with Lynette.</div>
     </div>
-    <button class="btn btn-p" data-new="question">+ New question</button>
+    <div class="page-head-actions">${xlsxDlBtn()}<button class="btn btn-p" data-new="question">+ New question</button></div>
   </div>
   <div class="toolbar">
     ${sel("questions","status","Show",[["open","Unresolved"]].concat(Q_STATUS.map(s=>[s,s])),f.status,"All")}
@@ -1786,7 +1787,7 @@ function vContacts(){
       <h2>Contacts</h2>
       <div class="sub">Outreach targets, the internal and grand-opening mailing list, and media contacts — all in one place. <b class="find">FIND</b> marks a gap still to close. Names are from public sources as of mid-2026: verify the person still holds the role before reaching out.</div>
     </div>
-    <button class="btn btn-p" data-new="contact">+ New contact</button>
+    <div class="page-head-actions">${xlsxDlBtn()}<button class="btn btn-p" data-new="contact">+ New contact</button></div>
   </div>
   <div class="toolbar">
     ${sel("contacts","list","List",lists.map(l=>[l,l]),f.list,"All lists")}
@@ -1827,7 +1828,7 @@ function vOrgs(){
       <h2>Memberships &amp; organizations</h2>
       <div class="sub">Recommended for <b>Dville LLC</b> — the ownership entity, not the CubeSmart brand. Cost figures are estimates that scale with company size; confirm current dues before committing.</div>
     </div>
-    <button class="btn btn-p" data-new="org">+ New organization</button>
+    <div class="page-head-actions">${xlsxDlBtn()}<button class="btn btn-p" data-new="org">+ New organization</button></div>
   </div>
   <div class="toolbar">
     ${sel("orgs","tier","Tier",[["Tier 1","Tier 1 — join first"],["Tier 2","Tier 2 — strong add-ons"]],f.tier,"All tiers")}
@@ -1868,7 +1869,7 @@ function vPromos(){
       <h2>Promotions</h2>
       <div class="sub">What we want to offer, who it's aimed at, and whose sign-off it needs. <b>We propose; CubeSmart's Revenue Management decides and builds the promo code.</b> Nothing here is live until Lynette takes it forward after onboarding.</div>
     </div>
-    <button class="btn btn-p" data-new="promo">+ New promotion</button>
+    <div class="page-head-actions">${xlsxDlBtn()}<button class="btn btn-p" data-new="promo">+ New promotion</button></div>
   </div>
   <div class="toolbar">
     ${sel("promos","status","Status",P_STATUS.map(s=>[s,s]),f.status,"Any status")}
@@ -2637,6 +2638,12 @@ function currentRows(){
 /* ---- which tabs are spreadsheet-shaped (Excel) vs report-shaped (PDF) ---- */
 const XLSX_VIEWS = new Set(["actions","questions","contacts","orgs","promos"]);
 function activeViewLabel(){ const v=VIEWS.find(v=>v.id===view); return v?v.label:"This tab"; }
+/* small in-page "Download Excel" button, used on each tabular tab's page-head */
+function xlsxDlBtn(){
+  return '<button class="btn btn-sm" data-xlsx="1" title="Download this tab as an Excel file">'
+    + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>'
+    + 'Download Excel</button>';
+}
 function downloadActiveTab(){
   if(XLSX_VIEWS.has(view)) exportTabXLSX();
   else window.print();
@@ -2724,6 +2731,9 @@ document.addEventListener("click",e=>{
 
   const pk=t.closest("[data-packet]");
   if(pk){ exportPacketXLSX(); return; }
+
+  const xl=t.closest("[data-xlsx]");
+  if(xl){ exportTabXLSX(); return; }
 
   const kpi=t.closest("[data-jump]");
   if(kpi){
