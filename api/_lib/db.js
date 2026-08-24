@@ -5,6 +5,7 @@
    ========================================================================= */
 const { Pool } = require("pg");
 const seedData = require("./seedData");
+const contactMetadata = require("./contactMetadata.json");
 
 function getConnectionString() {
   return (
@@ -92,6 +93,34 @@ async function nextRecordId(db, kind) {
   return prefix + String(n).padStart(2, "0");
 }
 
+/* Fills in priority/reliability/sourceNote/sourceUrl on contacts that
+   predate those fields (i.e. were seeded before this feature existed),
+   using the same best-guess metadata the seed data itself now ships with.
+   Only ever sets a field that's currently missing/empty, so it can never
+   overwrite a real edit made through the dashboard. Cheap no-op once
+   every contact already has these fields. */
+async function backfillContactMetadata(db) {
+  const { rows } = await db.query(
+    "SELECT record_id, data FROM records WHERE kind='contact' AND (data->>'priority' IS NULL OR data->>'priority'='' OR data->>'reliability' IS NULL OR data->>'reliability'='')"
+  );
+  for (const row of rows) {
+    const meta = contactMetadata[row.record_id];
+    if (!meta) continue; // a contact added after the original seed — nothing to backfill from
+    const data = row.data;
+    const patch = {};
+    if (!data.priority) patch.priority = meta.priority;
+    if (!data.reliability) patch.reliability = meta.reliability;
+    if (!data.sourceNote) patch.sourceNote = meta.sourceNote;
+    if (!data.sourceUrl && meta.sourceUrl) patch.sourceUrl = meta.sourceUrl;
+    if (Object.keys(patch).length === 0) continue;
+    const merged = Object.assign({}, data, patch);
+    await db.query(
+      "UPDATE records SET data=$1, updated_at=now() WHERE kind='contact' AND record_id=$2",
+      [JSON.stringify(merged), row.record_id]
+    );
+  }
+}
+
 async function withTransaction(pool, fn) {
   const client = await pool.connect();
   try {
@@ -124,6 +153,10 @@ function ensureReady(pool) {
       if (await isEmpty(pool)) {
         await withTransaction(pool, (client) => seedAll(client));
       }
+      // Runs every time too (not just on a fresh seed), so a database that
+      // was already seeded before priority/reliability existed heals itself
+      // the same way — no manual backfill script required on the live site.
+      await backfillContactMetadata(pool);
     })().catch((err) => {
       readyPromise = null;
       throw err;
@@ -140,6 +173,7 @@ module.exports = {
   seedAll,
   nextRecordId,
   ensureReady,
+  backfillContactMetadata,
   withTransaction,
   PREFIX,
   KIND_TO_LIST,

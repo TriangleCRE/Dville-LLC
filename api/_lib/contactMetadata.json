@@ -1,0 +1,764 @@
+{
+  "K01": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Direct contact — Triangle Investments team",
+    "sourceUrl": ""
+  },
+  "K02": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Direct contact — Triangle Investments team",
+    "sourceUrl": ""
+  },
+  "K14": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "K03": {
+    "priority": "High",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "K04": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Direct contact — CubeSmart onboarding calls/emails",
+    "sourceUrl": ""
+  },
+  "K05": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Direct contact — CubeSmart onboarding calls/emails",
+    "sourceUrl": ""
+  },
+  "K06": {
+    "priority": "High",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "K07": {
+    "priority": "High",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "K08": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "K09": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "K10": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Official Goodwill site confirms COO title and email",
+    "sourceUrl": "https://www.goodwillvalleys.com/mindy_boyd_coo/"
+  },
+  "K11": {
+    "priority": "High",
+    "reliability": "likely",
+    "sourceNote": "Confirmed at Goodwill marketing, exact title varies by source",
+    "sourceUrl": "https://www.goodwillvalleys.com/about-us/leadership/"
+  },
+  "K12": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Sources show Retail/District role, not Facilities title",
+    "sourceUrl": "https://www.linkedin.com/in/sharon-hodges-5b7614b1/"
+  },
+  "K13": {
+    "priority": "Medium",
+    "reliability": "likely",
+    "sourceNote": "Both real Goodwill staff, but titles are more senior than listed",
+    "sourceUrl": "https://www.linkedin.com/in/angelastanfill/"
+  },
+  "O01": {
+    "priority": "High",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O02": {
+    "priority": "High",
+    "reliability": "unverified",
+    "sourceNote": "Profiles suggest she left for Penn Entertainment (Nov 2025)",
+    "sourceUrl": "https://theorg.com/org/penn-entertainment/org-chart/carmen-kesel"
+  },
+  "O03": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Caesars Virginia's own channel confirms current SVP/GM",
+    "sourceUrl": "https://www.linkedin.com/posts/caesars-virginia_caesars-virginia-general-manager-chris-albrecht-activity-7227347421834424320-Wmpl"
+  },
+  "O04": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O05": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O06": {
+    "priority": "Medium",
+    "reliability": "likely",
+    "sourceNote": "Public source, compiled mid-2026 — not independently re-verified",
+    "sourceUrl": ""
+  },
+  "O07": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Contact page confirms phone and site",
+    "sourceUrl": "https://riverdistrictlofts.com/contact-us/"
+  },
+  "O08": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Official site confirms phone, email, web",
+    "sourceUrl": "https://www.viewatfranklin.com/"
+  },
+  "O09": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Official site confirms phone and email",
+    "sourceUrl": "https://www.wilkinsandco.com/contact/"
+  },
+  "O10": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O11": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O12": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O13": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Internal reference note, not a specific contact",
+    "sourceUrl": ""
+  },
+  "O14": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Official site confirms phone and email",
+    "sourceUrl": "https://www.1standmaindevelopment.com/contact"
+  },
+  "O15": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O16": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O17": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "City .gov directory confirms role, phone, email",
+    "sourceUrl": "https://www.danville-va.gov/directory.aspx?EID=156"
+  },
+  "O18": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Role now held by Drew Wilson per Averett's own release",
+    "sourceUrl": "https://www.averett.edu/about-us/news-events/director-of-marketing-and-communications/"
+  },
+  "O19": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Confirmed via Averett site; phone digits differ slightly",
+    "sourceUrl": "https://www.averett.edu/about-us/news-events/dr-venita-mitchell-active-in-leadership-programs/"
+  },
+  "O20": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O21": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O22": {
+    "priority": "Low",
+    "reliability": "likely",
+    "sourceNote": "Public source, compiled mid-2026 — not independently re-verified",
+    "sourceUrl": "https://averett.edu"
+  },
+  "O23": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O24": {
+    "priority": "Low",
+    "reliability": "likely",
+    "sourceNote": "Public source, compiled mid-2026 — not independently re-verified",
+    "sourceUrl": ""
+  },
+  "O25": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Company site/press confirm title as of 2026",
+    "sourceUrl": "https://www.stackinfra.com/about/meet-the-team/"
+  },
+  "O26": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Confirmed via official county staff directory",
+    "sourceUrl": "https://www.pittsylvaniacountyva.gov/directory.aspx?eid=155"
+  },
+  "O27": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O28": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O29": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O30": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O31": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O32": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O33": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O34": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Confirmed via Centra's own official location page",
+    "sourceUrl": "https://www.centrahealth.com/locations/centra-medical-group-danville"
+  },
+  "O35": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Confirmed via Sovah Health's official site",
+    "sourceUrl": "https://www.sovahhealth.com/danville"
+  },
+  "O36": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O37": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Official team site confirms AGM Entertainment role",
+    "sourceUrl": "https://www.appyleague.com/danville/news/danville-otterbots-announce-internal-promotions"
+  },
+  "O38": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "News/team site confirm current GM as of 2026",
+    "sourceUrl": "https://www.appyleague.com/danville/team/contact"
+  },
+  "O39": {
+    "priority": "Low",
+    "reliability": "verified",
+    "sourceNote": "Local news confirms current Ticket Sales/Experience Manager",
+    "sourceUrl": "https://www.chathamstartribune.com/sports/article_f09c0180-0013-11f0-b01e-679485ca5157.html"
+  },
+  "O40": {
+    "priority": "Low",
+    "reliability": "verified",
+    "sourceNote": "MiLB/team official contact page matches phone and email",
+    "sourceUrl": "https://www.milb.com/danville/contact"
+  },
+  "O41": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O42": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O43": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O44": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O45": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O46": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O47": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O48": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O49": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O50": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "O51": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Internal reference note, not a specific contact",
+    "sourceUrl": ""
+  },
+  "I01": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I02": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I03": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I04": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I05": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I06": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I07": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I08": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I09": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I10": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I11": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I12": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I13": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I14": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I15": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I16": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I17": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I18": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I19": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I20": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I21": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I22": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I23": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Confirmed via official City of Danville web page",
+    "sourceUrl": "https://www.danville-va.gov/1401/Mayor-Alonzo-Jones"
+  },
+  "I24": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I25": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Confirmed active as City Manager, Oct 2025 city notice",
+    "sourceUrl": "https://www.danville-va.gov/CivicAlerts.aspx?AID=6347"
+  },
+  "I26": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Office confirmed active via official city notice",
+    "sourceUrl": "https://www.danville-va.gov/CivicAlerts.aspx?AID=6467"
+  },
+  "I27": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I28": {
+    "priority": "High",
+    "reliability": "likely",
+    "sourceNote": "Phone/email match; her current 2026 role unconfirmed",
+    "sourceUrl": "https://www.dpchamber.org/meet-our-team/"
+  },
+  "I29": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I30": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Official association website is live and active",
+    "sourceUrl": "https://drrar.com/"
+  },
+  "I31": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I32": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I33": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "I34": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N01": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Confirmed godanriver.com as official paper site",
+    "sourceUrl": "https://godanriver.com/contact/"
+  },
+  "N02": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N03": {
+    "priority": "High",
+    "reliability": "verified",
+    "sourceNote": "Phone matches staff listing on cardinalnews.org",
+    "sourceUrl": "https://cardinalnews.org/contact-us/"
+  },
+  "N04": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N05": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Address confirmed on official WBTM contact page",
+    "sourceUrl": "https://www.wbtmdanville.com/contact-us"
+  },
+  "N06": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "wset.com confirmed as WSET's official site",
+    "sourceUrl": "https://wset.com/station/contact"
+  },
+  "N07": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "wdbj7.com confirmed as WDBJ7's official site",
+    "sourceUrl": "https://www.wdbj7.com/about-us/contact-us/"
+  },
+  "N08": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "wsls.com confirmed as WSLS's official site",
+    "sourceUrl": "https://www.wsls.com/"
+  },
+  "N09": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N10": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Phone/address match WBTM's own contact page",
+    "sourceUrl": "https://www.wbtmdanville.com/contact-us"
+  },
+  "N11": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N12": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N13": {
+    "priority": "Medium",
+    "reliability": "likely",
+    "sourceNote": "Address confirmed via directories, phone not site-verified",
+    "sourceUrl": "https://www.brooksmediagroup.net/contact-us"
+  },
+  "N14": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Phone and address match official magazine site",
+    "sourceUrl": "https://showcasemagazine.com/"
+  },
+  "N15": {
+    "priority": "Low",
+    "reliability": "verified",
+    "sourceNote": "Address and email match official magazine site",
+    "sourceUrl": "https://evincemagazine.com/contact/"
+  },
+  "N16": {
+    "priority": "Medium",
+    "reliability": "likely",
+    "sourceNote": "Public source, compiled mid-2026 — not independently re-verified",
+    "sourceUrl": ""
+  },
+  "N17": {
+    "priority": "Low",
+    "reliability": "likely",
+    "sourceNote": "Public source, compiled mid-2026 — not independently re-verified",
+    "sourceUrl": ""
+  },
+  "N18": {
+    "priority": "Medium",
+    "reliability": "verified",
+    "sourceNote": "Phone and email match official Chamber website",
+    "sourceUrl": "https://www.dpchamber.org/"
+  },
+  "N19": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N20": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N21": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N22": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N23": {
+    "priority": "Medium",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N24": {
+    "priority": "Low",
+    "reliability": "verified",
+    "sourceNote": "Phone and address confirmed on official vatsc.com site",
+    "sourceUrl": "https://www.vatsc.com/aboutus"
+  },
+  "N25": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Not yet found — needs research",
+    "sourceUrl": ""
+  },
+  "N26": {
+    "priority": "Low",
+    "reliability": "verified",
+    "sourceNote": "City of Danville confirms her as Visit SoSi tourism manager",
+    "sourceUrl": "https://www.danville-va.gov/CivicAlerts.aspx?AID=5971&ARC=14336"
+  },
+  "N27": {
+    "priority": "Low",
+    "reliability": "unverified",
+    "sourceNote": "Internal reference note, not a specific contact",
+    "sourceUrl": ""
+  },
+  "N28": {
+    "priority": "Low",
+    "reliability": "likely",
+    "sourceNote": "Details found via directory, not confirmed on own site",
+    "sourceUrl": "https://moshnation.net/contact-us"
+  }
+}
