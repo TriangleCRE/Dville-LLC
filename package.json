@@ -1,0 +1,13 @@
+{
+  "name": "dville-llc",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Danville Marketing Command Center — static dashboard + Vercel serverless API backed by Postgres.",
+  "scripts": {
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "pg": "8.13.1"
+  }
+}

@@ -1,13 +1,16 @@
 /* =========================================================================
    Edge Middleware — password gate
-   Runs on every request except /api/* (so the login endpoint itself stays
-   reachable) and checks for a valid session cookie before letting the
-   request continue to the real static dashboard. Without one, it serves a
-   self-contained login page directly and never touches the dashboard's
-   HTML/JS at all — so nothing about the site is revealed pre-auth.
+   Runs on every request except /api/login (so the login endpoint itself
+   stays reachable) and checks for a valid session cookie before letting
+   the request continue — to the real static dashboard, or to any other
+   /api/* route (e.g. /api/records), which sits behind this same gate.
+   Without a valid cookie: an /api/* request gets a plain 401 JSON
+   response; anything else gets a self-contained login page served
+   directly in place of the real page, so nothing about the dashboard's
+   HTML/JS/data is ever revealed pre-auth.
    ========================================================================= */
 export const config = {
-  matcher: ["/((?!api).*)"],
+  matcher: ["/((?!api/login).*)"],
 };
 
 const COOKIE_NAME = "dville_session";
@@ -138,8 +141,17 @@ function loginPage() {
 export default async function middleware(request) {
   const secret = process.env.PASSCODE;
   if (secret && (await isValidSession(request, secret))) {
-    return; // valid session — let the request through to the real dashboard
+    return; // valid session — let the request through (to the dashboard, or to /api/*)
   }
+
+  const { pathname } = new URL(request.url);
+  if (pathname.startsWith("/api/")) {
+    return new Response(JSON.stringify({ ok: false, error: "Not signed in" }), {
+      status: 401,
+      headers: { "content-type": "application/json", "cache-control": "no-store" },
+    });
+  }
+
   return new Response(loginPage(), {
     status: 200,
     headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
