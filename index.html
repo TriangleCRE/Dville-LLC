@@ -469,7 +469,8 @@ tr.grow td > *{vertical-align:middle}
       <button class="btn" id="ddbtn">Data ▾</button>
       <div class="dd-menu">
         <div class="lbl">Export</div>
-        <button data-act="csv">Export current view to CSV</button>
+        <button data-act="downloadtab" id="dlTabBtn">Download this tab</button>
+        <button data-act="packet">Download full data packet (Excel)</button>
         <button data-act="json">Export everything to JSON (backup)</button>
         <button data-act="print">Print / save as PDF</button>
         <div class="sep"></div>
@@ -1230,6 +1231,7 @@ function render(){
   else if(view==="guide")     m.innerHTML = vGuide();
   else if(view==="reference") m.innerHTML = vReference();
   if(view==="guide") mountPDF();
+  updateDownloadTabBtn();
 }
 
 /* =========================================================================
@@ -1393,6 +1395,13 @@ function vOverview(){
   }).filter(x=>x.all>0);
 
   return `
+  <div class="page-head">
+    <div>
+      <h2>Overview</h2>
+      <div class="sub">Where the opening stands right now, at a glance.</div>
+    </div>
+    <button class="btn btn-p" data-packet="1" title="One Excel workbook with every action item, question, contact, membership, promotion, milestone and source in this dashboard"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>Download full data packet</button>
+  </div>
   <div class="hero">
     <div class="countdown">
       <div class="lbl">${dOpen>0?"Days until the store opens":"Store is open"}</div>
@@ -2505,15 +2514,116 @@ function printBrief(){
 }
 
 /* =========================================================================
+   XLSX (Excel) — a genuine, minimal .xlsx workbook built with the same
+   zero-dependency zip writer used for the Word export above
+   ========================================================================= */
+function colLetter(n){
+  let s=""; while(n>0){ const m=(n-1)%26; s=String.fromCharCode(65+m)+s; n=Math.floor((n-1)/26); }
+  return s;
+}
+function xlsxSheetName(name,used){
+  let n = String(name||"Sheet").replace(/[\\\/\?\*\[\]:]/g,"").trim().slice(0,31) || "Sheet";
+  let base=n, i=2;
+  while(used.has(n)){ const suf="("+i+")"; i++; n = base.slice(0,Math.max(1,31-suf.length))+suf; }
+  used.add(n);
+  return n;
+}
+function xlsxSheetXML(rows){
+  const ncols = rows[0] ? rows[0].length : 1;
+  const widths = Array.from({length:ncols},(_,i)=>{
+    let w=8; rows.forEach(r=>{ w=Math.max(w, Math.min(46,String(r[i]==null?"":r[i]).length+2)); });
+    return w;
+  });
+  const cols = "<cols>"+widths.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join("")+"</cols>";
+  const body = rows.map((r,ri)=>{
+    const cells = r.map((v,ci)=>{
+      const ref = colLetter(ci+1)+(ri+1);
+      const s = ri===0 ? ' s="1"' : "";
+      return '<c r="'+ref+'" t="inlineStr"'+s+'><is><t xml:space="preserve">'+xesc(v==null?"":String(v))+'</t></is></c>';
+    }).join("");
+    return '<row r="'+(ri+1)+'">'+cells+'</row>';
+  }).join("");
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+    + cols + '<sheetData>'+body+'</sheetData></worksheet>';
+}
+function buildXlsx(sheets){
+  const used=new Set();
+  const names = sheets.map(s=>xlsxSheetName(s.name,used));
+  const enc = new TextEncoder();
+  const files = [];
+
+  const contentTypes = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+    + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+    + '<Default Extension="xml" ContentType="application/xml"/>'
+    + '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
+    + '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'
+    + sheets.map((s,i)=>'<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join("")
+    + '</Types>';
+  files.push({name:"[Content_Types].xml", data:enc.encode(contentTypes)});
+
+  const rootRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+    + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/>'
+    + '</Relationships>';
+  files.push({name:"_rels/.rels", data:enc.encode(rootRels)});
+
+  const workbook = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
+    + '<sheets>' + names.map((n,i)=>'<sheet name="'+xesc(n)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join("") + '</sheets>'
+    + '</workbook>';
+  files.push({name:"xl/workbook.xml", data:enc.encode(workbook)});
+
+  const stylesRid = sheets.length+1;
+  const wbRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+    + sheets.map((s,i)=>'<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>').join("")
+    + '<Relationship Id="rId'+stylesRid+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'
+    + '</Relationships>';
+  files.push({name:"xl/_rels/workbook.xml.rels", data:enc.encode(wbRels)});
+
+  const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+    + '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+    + '<fonts count="2"><font><sz val="10"/><name val="Calibri"/></font><font><b/><sz val="10"/><color rgb="FF1A1A1A"/><name val="Calibri"/></font></fonts>'
+    + '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFE8F6EC"/><bgColor indexed="64"/></patternFill></fill></fills>'
+    + '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>'
+    + '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'
+    + '<cellXfs count="2">'
+    + '<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'
+    + '<xf numFmtId="0" fontId="1" fillId="1" borderId="0" xfId="0" applyFont="1" applyFill="1"/>'
+    + '</cellXfs>'
+    + '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'
+    + '</styleSheet>';
+  files.push({name:"xl/styles.xml", data:enc.encode(styles)});
+
+  sheets.forEach((s,i)=>{
+    files.push({name:"xl/worksheets/sheet"+(i+1)+".xml", data:enc.encode(xlsxSheetXML(s.rows))});
+  });
+
+  return zipStore(files);
+}
+
+/* =========================================================================
    EXPORT / IMPORT
    ========================================================================= */
-function csvCell(v){ v=String(v==null?"":v); return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; }
 function download(name,text,mime){
   const b=new Blob([text],{type:mime||"text/plain;charset=utf-8"});
   const u=URL.createObjectURL(b); const a=document.createElement("a");
   a.href=u; a.download=name; document.body.appendChild(a); a.click();
   setTimeout(()=>{URL.revokeObjectURL(u); a.remove();},400);
 }
+function downloadBytes(name,bytes,mime){
+  const b=new Blob([bytes],{type:mime});
+  const u=URL.createObjectURL(b); const a=document.createElement("a");
+  a.href=u; a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(u); a.remove();},400);
+}
+function stampedFilename(slug,ext){
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  return "danville-"+slug+"-"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"."+ext;
+}
+function colLabel(c){ return {id:"ID",q:"Question",owedBy:"Owed by",title:"Title"}[c] || c.charAt(0).toUpperCase()+c.slice(1); }
 function currentRows(){
   if(view==="actions")   return {rows:fActions(),   cols:["id","title","detail","owner","phase","category","due","priority","status","source"], name:"action-items"};
   if(view==="questions") return {rows:fQuestions(), cols:["id","q","owedBy","status","priority","asked","context","answer","source"], name:"open-questions"};
@@ -2523,12 +2633,44 @@ function currentRows(){
   if(view==="opening")   return {rows:S.contacts.filter(c=>c.invite==="Yes"||c.invite==="TBD"), cols:["id","channel","org","name","title","phone","email","web","invite","notes"], name:"grand-opening-invite-list"};
   return {rows:S.actions, cols:["id","title","owner","phase","category","due","priority","status"], name:"action-items"};
 }
-function exportCSV(){
+
+/* ---- which tabs are spreadsheet-shaped (Excel) vs report-shaped (PDF) ---- */
+const XLSX_VIEWS = new Set(["actions","questions","contacts","orgs","promos"]);
+function activeViewLabel(){ const v=VIEWS.find(v=>v.id===view); return v?v.label:"This tab"; }
+function downloadActiveTab(){
+  if(XLSX_VIEWS.has(view)) exportTabXLSX();
+  else window.print();
+}
+function updateDownloadTabBtn(){
+  const btn=$("#dlTabBtn"); if(!btn) return;
+  const fmt = XLSX_VIEWS.has(view) ? "Excel" : "PDF";
+  btn.textContent = "Download "+activeViewLabel()+" ("+fmt+")";
+}
+
+/* ---- sheet helpers shared by the single-tab and full-packet exports ---- */
+function sheetRows(list,cols){
+  return [cols.map(colLabel)].concat(list.map(r=>cols.map(c=>r[c]==null?"":r[c])));
+}
+function exportTabXLSX(){
   const {rows,cols,name}=currentRows();
-  const head = cols.map(c=>({id:"ID",q:"Question",owedBy:"Owed by",title:"Title"}[c]||c.charAt(0).toUpperCase()+c.slice(1)));
-  const lines=[head.map(csvCell).join(",")].concat(rows.map(r=>cols.map(c=>csvCell(r[c])).join(",")));
-  download("danville-"+name+".csv","﻿"+lines.join("\r\n"),"text/csv;charset=utf-8");
-  toast("Exported "+rows.length+" rows");
+  if(!rows.length) return toast("Nothing to export in this view");
+  const bytes = buildXlsx([{name:activeViewLabel(), rows:sheetRows(rows,cols)}]);
+  downloadBytes(stampedFilename(name,"xlsx"), bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  toast("Exported "+rows.length+" rows to Excel");
+}
+function exportPacketXLSX(){
+  const sheets = [
+    {name:"Action Items",    rows:sheetRows(S.actions,   ["id","title","detail","owner","phase","category","due","priority","status","source"])},
+    {name:"Open Questions",  rows:sheetRows(S.questions, ["id","q","owedBy","status","priority","asked","context","answer","source"])},
+    {name:"Contacts",        rows:sheetRows(S.contacts,  ["id","list","channel","org","route","name","title","phone","email","web","status","invite","notes"])},
+    {name:"Memberships",     rows:sheetRows(S.orgs,      ["id","tier","name","cost","owner","status","why","notes"])},
+    {name:"Promotions",      rows:sheetRows(S.promos,    ["id","name","audience","approval","status","detail","notes"])},
+    {name:"Milestones",      rows:sheetRows(SEED_MILESTONES, ["date","label","detail","type"])},
+    {name:"Sources",         rows:sheetRows(SEED_SOURCES,    ["name","type","date","summary"])}
+  ];
+  const bytes = buildXlsx(sheets);
+  downloadBytes(stampedFilename("full-data-packet","xlsx"), bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  toast("Full data packet downloaded — "+sheets.length+" sheets");
 }
 function exportJSON(){
   const d=new Date(), p=n=>String(n).padStart(2,"0");
@@ -2571,13 +2713,17 @@ document.addEventListener("click",e=>{
   if(act){
     dd.classList.remove("open");
     const a=act.getAttribute("data-act");
-    if(a==="csv") exportCSV();
+    if(a==="downloadtab") downloadActiveTab();
+    if(a==="packet") exportPacketXLSX();
     if(a==="json") exportJSON();
     if(a==="print") window.print();
     if(a==="import") $("#fileinput").click();
     if(a==="reset") resetAll();
     return;
   }
+
+  const pk=t.closest("[data-packet]");
+  if(pk){ exportPacketXLSX(); return; }
 
   const kpi=t.closest("[data-jump]");
   if(kpi){
