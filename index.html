@@ -316,6 +316,25 @@ tr.grow td > *{vertical-align:middle}
 .mini-list .mr{margin-left:auto; display:flex; gap:6px; align-items:center; flex:0 0 auto}
 .mini-list li.isdone .mt{color:var(--faint); text-decoration:line-through}
 
+/* row checkbox — same look as the mini-list one, usable in a plain table cell */
+.rowchk{
+  display:inline-flex; align-items:center; justify-content:center; vertical-align:-3px;
+  width:15px; height:15px; border:1.5px solid var(--line); border-radius:4px;
+  background:#fff; font-size:10px; color:#fff; cursor:pointer; margin-right:7px; flex:0 0 auto;
+}
+.rowchk.done{background:var(--green); border-color:var(--green)}
+.rowchk:hover{border-color:var(--green)}
+
+/* inline-editable pill — a real <select>, styled to look like the read-only .pill badge */
+select.pill-edit{
+  font-family:inherit; cursor:pointer; -webkit-appearance:none; appearance:none;
+  padding:2px 20px 2px 8px; border-radius:999px; font-size:11.5px; font-weight:620; line-height:1.6;
+  background-repeat:no-repeat; background-position:right 7px center; background-size:8px 8px;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><path d="M1.5 3.5L5 7l3.5-3.5" fill="none" stroke="%236B7480" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+}
+select.pill-edit:hover{filter:brightness(.97)}
+select.pill-edit:focus{outline:2px solid rgba(34,99,143,.3); outline-offset:1px}
+
 /* ================= question cards ================= */
 .qcard{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh); padding:15px 17px; margin-bottom:11px; cursor:pointer; transition:.12s}
 .qcard:hover{border-color:var(--faint)}
@@ -785,6 +804,16 @@ const isDone = a => a.status==="Done";
 function overdue(a){ const d=parseDate(a.due); return !!d && !isDone(a) && d < today(); }
 function dueIn(a){ const d=parseDate(a.due); return d? days(d,today()) : null; }
 function pill(v){ return v ? '<span class="pill '+tone(v)+'">'+esc(v)+'</span>' : ""; }
+/* Same look as pill(), but a real <select> — for changing a field (like an
+   action's status, or a contact's priority) right from a table row,
+   without opening the edit drawer. options: [value,...] or [[value,label],...]. */
+function pillSelect(kind,id,field,value,options,placeholder){
+  const opts = (placeholder!=null ? [["",placeholder]] : []).concat(
+    options.map(o=>Array.isArray(o)?o:[o,o])
+  );
+  const body = opts.map(([v,l])=>'<option value="'+esc(v)+'"'+(v===(value||"")?" selected":"")+'>'+esc(l)+'</option>').join("");
+  return '<select class="pill-edit '+tone(value)+'" data-quickfield="'+esc(kind)+':'+esc(id)+':'+esc(field)+'">'+body+'</select>';
+}
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("on"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("on"),2100); }
 function opt(list,cur){ return list.map(o=>'<option'+(o===cur?" selected":"")+'>'+esc(o)+'</option>').join(""); }
 const hay = o => Object.values(o).join(" ").toLowerCase();
@@ -806,7 +835,7 @@ let view = "overview";
 let q = "";
 const F = {
   actions:{owner:"",phase:"",category:"",status:"",priority:"",hide:"open",special:""},
-  contacts:{list:"",channel:"",status:""},
+  contacts:{list:"",channel:"",status:"",priority:""},
   questions:{owed:"",status:"open"},
   orgs:{tier:"",status:""},
   promos:{status:""}
@@ -837,6 +866,7 @@ function fContacts(){
     if(f.list && c.list!==f.list) return false;
     if(f.channel && c.channel!==f.channel) return false;
     if(f.status && c.status!==f.status) return false;
+    if(f.priority && c.priority!==f.priority) return false;
     if(q && hay(c).indexOf(q)<0) return false;
     return true;
   });
@@ -1260,13 +1290,13 @@ function vActions(){
     return head + g.rows.map(a=>{
       const late=overdue(a);
       return `<tr data-open="action:${a.id}" class="${catClass(a.category)} ${isDone(a)?"rdone":""}">
-        <td class="tt"><span class="idcell">${a.id}</span> ${esc(a.title)}${density==="detailed"?`<div class="sub">${esc(a.detail)}</div>`:""}</td>
+        <td class="tt"><span class="rowchk ${isDone(a)?"done":""}" data-toggle="${a.id}" title="Mark done / not started">${isDone(a)?"✓":""}</span><span class="idcell">${a.id}</span> ${esc(a.title)}${density==="detailed"?`<div class="sub">${esc(a.detail)}</div>`:""}</td>
         <td class="nowrap">${esc(a.owner)}</td>
         <td class="nowrap" style="font-size:12px;color:var(--muted)">${esc(PHASE_BY_ID[a.phase]?PHASE_BY_ID[a.phase].name:a.phase)}</td>
         <td class="nowrap"><span class="catchip ${catClass(a.category)}">${esc(a.category)}</span></td>
         <td class="nowrap" style="${late?"color:var(--red);font-weight:640":""}">${fmtDate(a.due)}${late?" ⚑":""}</td>
         <td>${pill(a.priority)}</td>
-        <td>${pill(a.status)}</td>
+        <td>${pillSelect("action",a.id,"status",a.status,A_STATUS)}</td>
       </tr>`;
     }).join("");
   };
@@ -1477,6 +1507,7 @@ function vContacts(){
     ${sel("contacts","list","List",lists.map(l=>[l,l]),f.list,"All lists")}
     ${sel("contacts","channel","Channel",chans.map(c=>[c,c]),f.channel,"All channels")}
     ${sel("contacts","status","Status",C_STATUS.map(s=>[s,s]),f.status,"Any status")}
+    ${sel("contacts","priority","Priority",PRIORITIES.map(p=>[p,p]),f.priority,"Any priority")}
     <div class="chip-clear">
       <span class="count-note">${rows.length} of ${S.contacts.length}${gaps?" · "+gaps+" with gaps":""}</span>
       <button class="btn btn-sm" data-clear="contacts">Clear filters</button>
@@ -1484,9 +1515,10 @@ function vContacts(){
   </div>
   <div class="tablewrap">
     <table>
-      <thead><tr>${th("org","Organization")}${th("name","Contact")}${th("title","Role")}${th("phone","Phone")}${th("email","Email")}${th("channel","Channel")}${th("status","Status")}</tr></thead>
+      <thead><tr>${th("priority","Priority")}${th("org","Organization")}${th("name","Contact")}${th("title","Role")}${th("phone","Phone")}${th("email","Email")}${th("channel","Channel")}${th("status","Status")}</tr></thead>
       <tbody>
       ${rows.map(c=>`<tr data-open="contact:${c.id}">
+        <td>${pillSelect("contact",c.id,"priority",c.priority,PRIORITIES,"—")}</td>
         <td class="tt">${esc(c.org)}<div class="sub">${esc(c.notes)}</div></td>
         <td class="nowrap">${c.name==="FIND"?'<span class="find">FIND</span>':esc(c.name)}</td>
         <td style="font-size:12px;color:var(--muted);min-width:150px">${esc(c.title)}</td>
@@ -1494,7 +1526,7 @@ function vContacts(){
         <td class="mono" style="min-width:150px;word-break:break-all">${c.email==="FIND"?'<span class="find">FIND</span>':esc(c.email)}</td>
         <td class="nowrap" style="font-size:12px;color:var(--muted)">${esc(c.channel)}</td>
         <td>${pill(c.status)}</td>
-      </tr>`).join("") || `<tr><td colspan="7"><div class="empty"><b>No matching contacts</b>Try clearing the filters.</div></td></tr>`}
+      </tr>`).join("") || `<tr><td colspan="8"><div class="empty"><b>No matching contacts</b>Try clearing the filters.</div></td></tr>`}
       </tbody>
     </table>
   </div>`;
@@ -1943,7 +1975,8 @@ function drawerHTML(kind,r){
       <div class="f2">${fld("Phone","phone",r.phone)}${fld("Email","email",r.email)}</div>
       ${fld("Website / address","web",r.web)}
       <div class="f2">${fld("List","list",r.list,"select",["Outreach","Internal & Invites","Media & Advertising"])}${fld("Status","status",r.status,"select",C_STATUS)}</div>
-      <div class="f2">${fld("Channel","channel",r.channel)}${fld("Invite to grand opening?","invite",r.invite,"select",INVITE)}</div>
+      <div class="f2">${fld("Priority to reach out to","priority",r.priority,"select",["",...PRIORITIES])}${fld("Invite to grand opening?","invite",r.invite,"select",INVITE)}</div>
+      ${fld("Channel","channel",r.channel)}
       ${fld("Contact route / department","route",r.route)}
       ${fld("Notes","notes",r.notes,"textarea")}
       ${r.email && r.email!=="FIND" && r.email.indexOf("@")>0 ? `<a class="btn" style="width:100%;justify-content:center" href="mailto:${esc(r.email.split(" ")[0])}">Email ${esc(r.name!=="FIND"&&r.name!=="—"?r.name:r.org)}</a>`:""}
@@ -2004,7 +2037,7 @@ async function newRec(kind){
   const draft = {
     action:   {title:"New action item",detail:"",phase:"p1",category:"Local Outreach",owner:"Unassigned",due:"",priority:"Medium",status:"Not started",source:"Added manually"},
     question: {q:"New question",context:"",owedBy:"Ben",priority:"Medium",status:"Open",asked:"",answer:"",source:"Added manually"},
-    contact:  {list:"Outreach",channel:"Local Outreach",org:"New organization",route:"",name:"FIND",title:"",phone:"FIND",email:"FIND",web:"",status:"Not started",invite:"No",notes:""},
+    contact:  {list:"Outreach",channel:"Local Outreach",org:"New organization",route:"",name:"FIND",title:"",phone:"FIND",email:"FIND",web:"",status:"Not started",priority:"",invite:"No",notes:""},
     org:      {tier:"Tier 2",name:"New organization",why:"",cost:"",status:"Not started",owner:"Unassigned",notes:""},
     promo:    {name:"New promotion",audience:"",detail:"",approval:"Revenue Management",status:"Idea",notes:""}
   }[kind];
@@ -2017,17 +2050,25 @@ async function newRec(kind){
   render(); openDrawer(kind,rec.id);
 }
 
-async function toggleActionDone(id){
+function toggleActionDone(id){
   const a = find("action", id);
   if(!a) return;
-  const before = a.status;
-  a.status = isDone(a) ? "Not started" : "Done"; // optimistic — flip it immediately, revert if the save fails
+  quickUpdate("action", id, "status", isDone(a) ? "Not started" : "Done");
+}
+/* Change a single field on a record and save it right away — no drawer,
+   no full re-edit. Used for the status/priority dropdowns embedded
+   directly in table rows. Optimistic: updates the UI immediately and
+   reverts (with a toast) if the save fails. */
+async function quickUpdate(kind,id,field,value){
+  const rec = find(kind, id);
+  if(!rec || rec[field]===value) return;
+  const before = rec[field];
+  rec[field] = value;
   render();
   try{
-    await withSaveChip(()=>apiUpdate("action", id, a));
-    toast(isDone(a)?"Marked done":"Reopened");
+    await withSaveChip(()=>apiUpdate(kind, id, rec));
   }catch(e){
-    a.status = before;
+    rec[field] = before;
     render();
     toast("Couldn't save — try again");
   }
@@ -2347,7 +2388,7 @@ function colLabel(c){ return {id:"ID",q:"Question",owedBy:"Owed by",title:"Title
 function currentRows(){
   if(view==="actions")   return {rows:fActions(),   cols:["id","title","detail","owner","phase","category","due","priority","status","source"], name:"action-items"};
   if(view==="questions") return {rows:fQuestions(), cols:["id","q","owedBy","status","priority","asked","context","answer","source"], name:"open-questions"};
-  if(view==="contacts")  return {rows:fContacts(),  cols:["id","list","channel","org","route","name","title","phone","email","web","status","invite","notes"], name:"contacts"};
+  if(view==="contacts")  return {rows:fContacts(),  cols:["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","notes"], name:"contacts"};
   if(view==="orgs")      return {rows:fOrgs(),      cols:["id","tier","name","cost","owner","status","why","notes"], name:"memberships"};
   if(view==="promos")    return {rows:fPromos(),    cols:["id","name","audience","approval","status","detail","notes"], name:"promotions"};
   if(view==="opening")   return {rows:S.contacts.filter(c=>c.invite==="Yes"||c.invite==="TBD"), cols:["id","channel","org","name","title","phone","email","web","invite","notes"], name:"grand-opening-invite-list"};
@@ -2388,7 +2429,7 @@ function exportPacketXLSX(){
   const sheets = [
     {name:"Action Items",    rows:sheetRows(S.actions,   ["id","title","detail","owner","phase","category","due","priority","status","source"])},
     {name:"Open Questions",  rows:sheetRows(S.questions, ["id","q","owedBy","status","priority","asked","context","answer","source"])},
-    {name:"Contacts",        rows:sheetRows(S.contacts,  ["id","list","channel","org","route","name","title","phone","email","web","status","invite","notes"])},
+    {name:"Contacts",        rows:sheetRows(S.contacts,  ["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","notes"])},
     {name:"Memberships",     rows:sheetRows(S.orgs,      ["id","tier","name","cost","owner","status","why","notes"])},
     {name:"Promotions",      rows:sheetRows(S.promos,    ["id","name","audience","approval","status","detail","notes"])},
     {name:"Milestones",      rows:sheetRows(SEED_MILESTONES, ["date","label","detail","type"])},
@@ -2486,7 +2527,7 @@ document.addEventListener("click",e=>{
     e.preventDefault();
     const g=clear.getAttribute("data-clear");
     if(g==="actions") F.actions={owner:"",phase:"",category:"",status:"",priority:"",hide:"open",special:""};
-    if(g==="contacts") F.contacts={list:"",channel:"",status:""};
+    if(g==="contacts") F.contacts={list:"",channel:"",status:"",priority:""};
     if(g==="questions") F.questions={owed:"",status:"open"};
     if(g==="orgs") F.orgs={tier:"",status:""};
     if(g==="promos") F.promos={status:""};
@@ -2563,6 +2604,8 @@ document.addEventListener("click",e=>{
     return;
   }
 
+  if(t.closest("[data-quickfield]")) return; // clicking the inline status/priority dropdown shouldn't also open the drawer
+
   const op=t.closest("[data-open]");
   if(op){ const [k,id]=op.getAttribute("data-open").split(":"); openDrawer(k,id); return; }
 });
@@ -2578,6 +2621,14 @@ document.addEventListener("change",e=>{
     if(g==="contacts" && k==="list") F.contacts.channel="";
     render(); return;
   }
+
+  const qf=e.target.closest("[data-quickfield]");
+  if(qf){
+    const [kind,id,field]=qf.getAttribute("data-quickfield").split(":");
+    quickUpdate(kind,id,field,qf.value);
+    return;
+  }
+
   if(e.target.id==="fileinput" && e.target.files[0]){ importJSON(e.target.files[0]); e.target.value=""; }
 });
 
