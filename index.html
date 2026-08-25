@@ -870,7 +870,7 @@ const VIEWS = [
 let view = "overview";
 let q = "";
 const F = {
-  actions:{owner:"",phase:"",category:"",status:"",priority:"",hide:"open",special:""},
+  actions:{owner:"",phase:"",category:"",status:"",priority:"",hide:"all",special:""},
   contacts:{list:"",channel:"",status:"",priority:""},
   questions:{owed:"",status:"open"},
   orgs:{tier:"",status:""},
@@ -2565,7 +2565,7 @@ document.addEventListener("click",e=>{
   if(clear){
     e.preventDefault();
     const g=clear.getAttribute("data-clear");
-    if(g==="actions") F.actions={owner:"",phase:"",category:"",status:"",priority:"",hide:"open",special:""};
+    if(g==="actions") F.actions={owner:"",phase:"",category:"",status:"",priority:"",hide:"all",special:""};
     if(g==="contacts") F.contacts={list:"",channel:"",status:"",priority:""};
     if(g==="questions") F.questions={owed:"",status:"open"};
     if(g==="orgs") F.orgs={tier:"",status:""};
