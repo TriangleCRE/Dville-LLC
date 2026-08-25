@@ -941,6 +941,12 @@ function sortRows(rows,key){
   const s=SORT[key]; if(!s) return rows;
   const rank={High:0,Medium:1,Low:2};
   return rows.slice().sort((a,b)=>{
+    if(key==="actions"){
+      // a completed item floats to the top of whatever section it's in
+      // (its phase group, most visibly) — ahead of the regular sort key
+      const ad=isDone(a)?0:1, bd=isDone(b)?0:1;
+      if(ad!==bd) return ad-bd;
+    }
     let x=a[s.k], y=b[s.k];
     if(s.k==="priority"){ x=rank[x]; y=rank[y]; }
     if(s.k==="due"){ x = x||"9999-99-99"; y = y||"9999-99-99"; }
