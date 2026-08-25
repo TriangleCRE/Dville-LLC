@@ -492,7 +492,7 @@ select.pill-edit:focus{outline:2px solid rgba(34,99,143,.3); outline-offset:1px}
     <div class="divider"></div>
     <div class="titles">
       <div class="t1">Danville Marketing Command Center</div>
-      <div class="t2">CubeSmart Self Storage · Store 5605 · Opening October 6, 2026</div>
+      <div class="t2">CubeSmart Self Storage · Store 5605 · Opening October 13, 2026</div>
     </div>
   </div>
   <div class="topbar-spacer"></div>
@@ -545,13 +545,14 @@ const SEED_MILESTONES = [
 {date:"2026-08-12",label:"Ben opens the local-promotions question with CubeSmart",detail:"Employee discounts and facilities/procurement rates for local organizations. Same day, Ben opens the Goodwill conversation.",type:"past"},
 {date:"2026-08-19",label:"Goodwill escalates internally and asks for confirmation",detail:"Mindy Boyd (COO) loops in the Director of Marketing & Communications and store leadership, asks whether Triangle is the party they'd work with directly, and says they'd love to attend the grand opening.",type:"past"},
 {date:"2026-08-20",label:"CubeSmart check-in call + marketing update",detail:"Dominique confirms CubeSmart has supported similar local initiatives before but any discount or promotional offer requires Revenue Management approval. Notes from this call still need to be written up.",type:"past"},
-{date:"2026-09-06",label:"~30 days out: final walkthrough and unit-size confirmation",detail:"Andy performs the final walkthrough and confirms unit sizes; Revenue Management and the RM then set final pricing. Marketing materials and “Coming Soon” banners normally ship around this point.",type:"future"},
-{date:"2026-09-15",label:"~3 weeks out: payroll begins accruing",detail:"CubeSmart hires two store teammates and flies in a trainer for seven days. Offers require Ben's permission before they're extended.",type:"future"},
+{date:"2026-08-21",label:"CubeSmart sends the full 8/21 action-items checklist",detail:"Dominique's readout from the Aug 20 call: target date moves to October 13, 2026; CubeSmart has approved opening hiring requisitions for the store team; the telecom (Verizon), access-control (PTI StorLogix) and camera (OpenEye) checklists; sharing utility bills once permanent power/water is in; and reminders on bathroom fixtures/carts/dollies (new vendor contact: Rebecca Gessler, Professional Supply) and setting up the physical mailbox with USPS. Next call scheduled for 9/3.",type:"past"},
+{date:"2026-09-13",label:"~30 days out: final walkthrough and unit-size confirmation",detail:"Andy performs the final walkthrough and confirms unit sizes; Revenue Management and the RM then set final pricing. Marketing materials and “Coming Soon” banners normally ship around this point.",type:"future"},
+{date:"2026-09-22",label:"~3 weeks out: payroll begins accruing",detail:"CubeSmart hires two store teammates and flies in a trainer for seven days. Offers require Ben's permission before they're extended.",type:"future"},
 {date:"2026-09-30",label:"Construction substantially complete",detail:"Target is the last week of September, with the two elevators landing 2–3 weeks after opening.",type:"future"},
-{date:"2026-10-02",label:"3–4 days out: marketing kit ships to the sister store",detail:"KIT-04 plus the “First Month Free” and “Now Open” banners are delivered to the nearest sister facility — which is about two hours away, so somebody has to go get them.",type:"future"},
-{date:"2026-10-06",label:"OPENING DAY — store onboards",detail:"Site flips from Coming Soon to live reservations, the Sales Center works the pre-book list, paid search and aggregators switch on, local listings are created, and Dominique hands off to Lynette. Everything gated on onboarding unlocks today.",type:"key"},
-{date:"2026-10-09",label:"Week one: Relationship Manager kickoff",detail:"The call where the promo code, the campaign mix, direct mail and the local partnership asks all get decided. Bring the promotions wish-list.",type:"future"},
-{date:"2026-11-01",label:"Grand opening window opens",detail:"Ribbon cutting roughly 4–8 weeks after opening, run through the Chamber. Invitations go out 4–5 weeks ahead, so the date needs locking by late September.",type:"future"}
+{date:"2026-10-09",label:"3–4 days out: marketing kit ships to the sister store",detail:"KIT-04 plus the “First Month Free” and “Now Open” banners are delivered to the nearest sister facility — which is about two hours away, so somebody has to go get them.",type:"future"},
+{date:"2026-10-13",label:"OPENING DAY — store onboards",detail:"Site flips from Coming Soon to live reservations, the Sales Center works the pre-book list, paid search and aggregators switch on, local listings are created, and Dominique hands off to Lynette. Everything gated on onboarding unlocks today.",type:"key"},
+{date:"2026-10-16",label:"Week one: Relationship Manager kickoff",detail:"The call where the promo code, the campaign mix, direct mail and the local partnership asks all get decided. Bring the promotions wish-list.",type:"future"},
+{date:"2026-11-08",label:"Grand opening window opens",detail:"Ribbon cutting roughly 4–8 weeks after opening, run through the Chamber. Invitations go out 4–5 weeks ahead, so the date needs locking by mid-October.",type:"future"}
 ];
 
 /* ============================ SOURCE LIBRARY ============================ */
@@ -564,6 +565,7 @@ const SEED_SOURCES = [
 {name:"Danville_Membership_Recommendations",type:"Recommendation",date:"2026-07-15",summary:"Tier 1 and Tier 2 organizations with estimated annual dues and the rationale for each. Recommends joining under Dville LLC rather than the CubeSmart brand."},
 {name:"CubeSmart Management Marketing Guide",type:"Reference",date:"Sept 2025",summary:"CubeSmart's owner-facing marketing guide: what they do nationally, brand-approval rules, incremental opportunities, direct mail, signage, the new-facility onboarding timeline, the cost allocation table, and the FAQ covering owner vendors and press releases."},
 {name:"Email — 5605 Danville, VA Action Items as of 7/23/2026",type:"Email",date:"2026-07-23",summary:"Dominique's full follow-up: target date, hiring, unit numbers, the marketing summary, telecom, access control, insurance, signage, office millwork, utilities and other reminders."},
+{name:"Email — Fwd: 5605 Danville, VA Action Items as of 8/21/2026",type:"Email",date:"2026-08-21",summary:"Ben's forwarded readout from Dominique after their 8/20 call: target date updated to 10/13/2026, hiring requisitions approved, the telecom/access-control/camera checklists with exact information CubeSmart needs, utilities bill-sharing, and reminders on bathroom fixtures/carts/dollies (Professional Supply — Rebecca Gessler) and the physical mailbox."},
 {name:"Email — 7/23/26 CubeSmart Call Follow-Up & Notes",type:"Email",date:"2026-07-23",summary:"Sarah's three strategic questions to Ben after the call, with Ben's inline answers — including his approval to pursue the pre-open coming-soon flyer."},
 {name:"Email — Danville Marketing Follow up",type:"Email",date:"2026-08-12 → 08-20",summary:"Ben's local-promotions questions to CubeSmart and their two-part answer, ending with: any discount or promotional offer requires Revenue Management review and approval."},
 {name:"Email — Danville CubeSmart Storage",type:"Email",date:"2026-08-12 → 08-19",summary:"The Goodwill thread. Ben's four collaboration ideas, Sharon Hodges' handoff to marketing, and Mindy Boyd's engaged reply looping in the Director of Marketing & Communications."},
@@ -670,7 +672,7 @@ const GUIDE_SECTIONS = [
    means:"Not applicable to us today — but if Triangle ever builds a Danville landing page, it has to redirect rather than take bookings."},
   {part:"Frequently asked questions", p:"32–34", title:"FAQ — search engine marketing",
    says:"Paid search doesn't start until the facility can take reservations. “Coming soon” listings rank lower in local search than open businesses. Timelines after management begins: aggregators one to five business days, paid search five to ten business days, local one to five business days, organic one to three months. CubeSmart always ranks first for branded searches; top-four for competitive non-brand terms may not be achievable efficiently. Several pages explain why self-searching gives a misleading picture, citing SEO tests, browser caching and Google's machine learning.",
-   means:"Expect a week to ten days after Oct 6 before paid search is fully live. Plan the local push to cover that gap rather than assuming digital carries opening week."},
+   means:"Expect a week to ten days after Oct 13 before paid search is fully live. Plan the local push to cover that gap rather than assuming digital carries opening week."},
   {part:"Frequently asked questions", p:"34", title:"FAQ — social media",
    says:"Individual facilities may not have their own social profiles, to protect brand continuity and keep customer service centralised in the Sales Center. Facility Facebook pages exist only as local listing citations and review collection points, are not actively managed, and owners get no administrative access. Facility-specific Facebook campaigns can be run through the RM.",
    means:"Rules out the obvious idea of a Danville facility page we post to. Everything social routes through Lynette."},
@@ -722,13 +724,13 @@ const PDF_B64 = "JVBERi0xLjYNJeLjz9MNCjE4NjIgMCBvYmoNPDwvTGluZWFyaXplZCAxL0wgMjE
 "use strict";
 
 /* ---------------- constants ---------------- */
-const OPEN_DATE = new Date(2026,9,6);          // Oct 6 2026
+const OPEN_DATE = new Date(2026,9,13);         // Oct 13 2026
 const GO_DATE   = new Date(2026,10,1);         // Nov 1 2026 (ceremony window opens)
 
 const PHASES = [
   {id:"p1", name:"Now — Foundation",            range:"through early September", blurb:"Relationships, memberships and the questions that unblock everything else. None of this needs CubeSmart's permission."},
   {id:"p2", name:"30 Days Out",                 range:"September",               blurb:"Pre-approval of collateral, the press release, the promo wish-list, and the walkthrough that sets pricing."},
-  {id:"p3", name:"Opening — Oct 6",             range:"October",                 blurb:"Everything gated on onboarding unlocks. The Relationship Manager becomes the main contact and the push begins."},
+  {id:"p3", name:"Opening — Oct 13",            range:"October",                 blurb:"Everything gated on onboarding unlocks. The Relationship Manager becomes the main contact and the push begins."},
   {id:"p4", name:"Grand Opening",               range:"November",                blurb:"Ribbon cutting through the Chamber, roughly 4–8 weeks after opening. Invitations go out 4–5 weeks ahead."},
   {id:"p5", name:"Sustain",                     range:"December onward",         blurb:"Measure what converted, renew what worked, and get ready before U-Haul opens."}
 ];
@@ -1163,7 +1165,7 @@ function vOverview(){
     <div class="countdown">
       <div class="lbl">${dOpen>0?"Days until the store opens":"Store is open"}</div>
       <div class="big">${dOpen>0?dOpen:0}<span>${dOpen>0?"days":"— open"}</span></div>
-      <div class="date">${fmtLong("2026-10-06")} · the date everything unlocks</div>
+      <div class="date">${fmtLong("2026-10-13")} · the date everything unlocks</div>
       <div class="cd-rows">
         <div class="cd-row"><span>Grand-opening window opens</span><b>${dGO>0?dGO+" days":"now"}</b></div>
         <div class="cd-row"><span>Andy's ~30-day walkthrough &amp; final pricing</span><b>${Math.max(0,days(new Date(2026,8,6),today()))} days</b></div>
@@ -1181,7 +1183,7 @@ function vOverview(){
       </div>
       <div class="card mt14">
         <div class="card-b">
-          <div class="callout"><b>Where this stands.</b> CubeSmart won't produce materials, run campaigns, or approve promotions until the store onboards on <b>October 6</b>. Everything between now and then is relationship work that needs nobody's permission — plus two levers that do: getting Jill to pre-approve the collateral so it prints day one, and getting a pre-open “coming soon” flyer cleared.</div>
+          <div class="callout"><b>Where this stands.</b> CubeSmart won't produce materials, run campaigns, or approve promotions until the store onboards on <b>October 13</b>. Everything between now and then is relationship work that needs nobody's permission — plus two levers that do: getting Jill to pre-approve the collateral so it prints day one, and getting a pre-open “coming soon” flyer cleared.</div>
         </div>
       </div>
     </div>
@@ -1790,7 +1792,7 @@ function vReference(){
         <div class="fact"><div class="fk">Store</div><div class="fv">CubeSmart #5605 · Danville, VA</div></div>
         <div class="fact"><div class="fk">Owner entity</div><div class="fv">Dville LLC · Triangle Investments</div></div>
         <div class="fact"><div class="fk">Manager</div><div class="fv">CubeSmart (NYSE: CUBE)</div></div>
-        <div class="fact"><div class="fk">Target open / onboard</div><div class="fv">Tuesday, October 6, 2026</div></div>
+        <div class="fact"><div class="fk">Target open / onboard</div><div class="fv">Tuesday, October 13, 2026</div></div>
         <div class="fact"><div class="fk">Construction complete</div><div class="fv">Last week of September</div></div>
         <div class="fact"><div class="fk">Elevators</div><div class="fv">2–3 weeks after opening</div></div>
         <div class="fact"><div class="fk">Grand opening</div><div class="fv">November 2026</div></div>
@@ -1810,11 +1812,12 @@ function vReference(){
         <table class="reftable">
           <thead><tr><th>Person</th><th>Role</th><th>When they matter</th></tr></thead>
           <tbody>
-            <tr><td><b>Dominique Moccia</b><br><span style="color:var(--muted);font-size:11.5px">610-535-5187</span></td><td>Store Transitions Coordinator, CubeSmart</td><td>Primary contact <b>until Oct 6</b>. Monthly check-ins and the onboarding checklist.</td></tr>
+            <tr><td><b>Dominique Moccia</b><br><span style="color:var(--muted);font-size:11.5px">610-535-5187</span></td><td>Store Transitions Coordinator, CubeSmart</td><td>Primary contact <b>until Oct 13</b>. Monthly check-ins and the onboarding checklist.</td></tr>
             <tr><td><b>Andy Hilsabeck</b><br><span style="color:var(--muted);font-size:11.5px">267-966-5708</span></td><td>District Manager, CubeSmart</td><td>Hiring, the trainer, the ~30-day walkthrough, the August banner delivery. Invited operational questions of any size.</td></tr>
-            <tr><td><b>Lynette</b> <span class="find">(last name to find)</span></td><td>Relationship Manager, CubeSmart</td><td><b>Main contact from Oct 6.</b> Campaigns, promo codes, direct mail, collateral, local partnerships.</td></tr>
+            <tr><td><b>Lynette</b> <span class="find">(last name to find)</span></td><td>Relationship Manager, CubeSmart</td><td><b>Main contact from Oct 13.</b> Campaigns, promo codes, direct mail, collateral, local partnerships.</td></tr>
             <tr><td><b>Jill</b> <span class="find">(last name to find)</span></td><td>Marketing team, CubeSmart</td><td>Can pre-design and pre-approve our collateral so it prints on day one.</td></tr>
             <tr><td><b>Revenue Management</b></td><td>CubeSmart pricing team</td><td>Approves every discount and promotion. Reached through the RM.</td></tr>
+            <tr><td><b>Rebecca Gessler</b><br><span style="color:var(--muted);font-size:11.5px">920-565-4111</span></td><td>Professional Supply (vendor)</td><td>New vendor from the 8/21 email — order bathroom fixtures, platform carts and dollies through her before opening.</td></tr>
             <tr><td><b>Ben Blackburn</b><br><span style="color:var(--muted);font-size:11.5px">336-577-3533</span></td><td>Principal, Triangle Investments</td><td>Owner decisions, budget, the GC relationship, the CubeSmart relationship.</td></tr>
             <tr><td><b>Sarah Dahl</b></td><td>Triangle Investments</td><td>Outreach, memberships, materials, press, ceremony planning.</td></tr>
           </tbody>

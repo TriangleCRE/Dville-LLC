@@ -6,6 +6,7 @@
 const { Pool } = require("pg");
 const seedData = require("./seedData");
 const contactMetadata = require("./contactMetadata.json");
+const aug21Patches = require("./aug21Patches.json");
 
 function getConnectionString() {
   return (
@@ -121,6 +122,53 @@ async function backfillContactMetadata(db) {
   }
 }
 
+/* Net-new records introduced by Dominique's 8/21/2026 CubeSmart action-items
+   email — added to SEED_ACTIONS/SEED_CONTACTS after the original seed shipped.
+   A fresh install picks these up via seedAll() automatically; a database that
+   was already seeded needs them inserted explicitly. Only ever INSERTs a row
+   whose (kind, record_id) doesn't already exist — never touches a record
+   that's already there, even one a user later deleted on purpose. */
+const NEW_RECORDS_AUG21 = [
+  { kind: "action", id: "A22" },
+  { kind: "action", id: "A23" },
+  { kind: "action", id: "A24" },
+  { kind: "action", id: "A25" },
+  { kind: "action", id: "A26" },
+  { kind: "action", id: "A27" },
+  { kind: "action", id: "A28" },
+  { kind: "contact", id: "I35" },
+];
+
+/* Guarded text/status corrections to existing records that Dominique's 8/21
+   email resolved or corrected (the target date moving from 10/6 to 10/13,
+   plus what it answered about the Aug 20 call). Each patch only applies while
+   every field it's about to touch still holds its exact original pre-8/21
+   value (see api/_lib/aug21Patches.json) — so a record a user has already
+   edited, in any of those fields, is left completely alone. */
+async function applyAug21Update(db) {
+  for (const { kind, id } of NEW_RECORDS_AUG21) {
+    const rec = (KIND_TO_SEED[kind] || []).find((r) => r.id === id);
+    if (!rec) continue;
+    await db.query(
+      "INSERT INTO records (kind, record_id, data) VALUES ($1,$2,$3) ON CONFLICT (kind, record_id) DO NOTHING",
+      [kind, id, JSON.stringify(rec)]
+    );
+  }
+  for (const u of aug21Patches) {
+    const { rows } = await db.query("SELECT data FROM records WHERE kind=$1 AND record_id=$2", [u.kind, u.id]);
+    if (!rows.length) continue;
+    const data = rows[0].data;
+    const guardOk = Object.entries(u.guard).every(([field, value]) => (data[field] ?? "") === value);
+    if (!guardOk) continue;
+    const merged = Object.assign({}, data, u.patch);
+    await db.query("UPDATE records SET data=$1, updated_at=now() WHERE kind=$2 AND record_id=$3", [
+      JSON.stringify(merged),
+      u.kind,
+      u.id,
+    ]);
+  }
+}
+
 async function withTransaction(pool, fn) {
   const client = await pool.connect();
   try {
@@ -157,6 +205,10 @@ function ensureReady(pool) {
       // was already seeded before priority/reliability existed heals itself
       // the same way — no manual backfill script required on the live site.
       await backfillContactMetadata(pool);
+      // Same idea for the 8/21/2026 CubeSmart action-items email: adds the
+      // handful of records it introduced and guard-patches the few it
+      // resolved, without ever touching a record a user has since edited.
+      await applyAug21Update(pool);
     })().catch((err) => {
       readyPromise = null;
       throw err;
@@ -174,6 +226,7 @@ module.exports = {
   nextRecordId,
   ensureReady,
   backfillContactMetadata,
+  applyAug21Update,
   withTransaction,
   PREFIX,
   KIND_TO_LIST,
