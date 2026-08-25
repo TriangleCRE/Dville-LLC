@@ -335,6 +335,24 @@ select.pill-edit{
 select.pill-edit:hover{filter:brightness(.97)}
 select.pill-edit:focus{outline:2px solid rgba(34,99,143,.3); outline-offset:1px}
 
+/* reliability dot — how trustworthy a record's contact info is, with a
+   hover/focus tooltip (JS-positioned, see reltip-pop) naming the source */
+.reldot{
+  display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px;
+  vertical-align:middle; cursor:default; flex:0 0 auto;
+}
+.reldot.rel-verified{background:var(--green)}
+.reldot.rel-likely{background:var(--amber)}
+.reldot.rel-unverified{background:var(--red)}
+.reldot:focus{outline:2px solid rgba(34,99,143,.3); outline-offset:2px}
+.reltip-pop{
+  position:fixed; display:none; max-width:250px; background:#23272B; color:#fff;
+  font-size:11.5px; line-height:1.5; padding:8px 10px; border-radius:8px; z-index:200;
+  box-shadow:var(--sh-lg);
+}
+.reltip-pop b{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; color:#B7C0CC}
+.reltip-pop a{color:#8FCBFF; font-weight:600}
+
 /* ================= question cards ================= */
 .qcard{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh); padding:15px 17px; margin-bottom:11px; cursor:pointer; transition:.12s}
 .qcard:hover{border-color:var(--faint)}
@@ -512,6 +530,7 @@ select.pill-edit:focus{outline:2px solid rgba(34,99,143,.3); outline-offset:1px}
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" aria-hidden="true"></aside>
 <div class="toast" id="toast"></div>
+<div class="reltip-pop" id="reltip" role="tooltip"></div>
 <input type="file" id="fileinput" accept="application/json" style="display:none">
 
 <script>
@@ -814,8 +833,25 @@ function pillSelect(kind,id,field,value,options,placeholder){
   const body = opts.map(([v,l])=>'<option value="'+esc(v)+'"'+(v===(value||"")?" selected":"")+'>'+esc(l)+'</option>').join("");
   return '<select class="pill-edit '+tone(value)+'" data-quickfield="'+esc(kind)+':'+esc(id)+':'+esc(field)+'">'+body+'</select>';
 }
+const REL_LABEL = {verified:"Verified", likely:"Likely accurate", unverified:"Unverified"};
+/* Small green/amber/red dot showing how reliable a record's contact info
+   is. Hovering (or focusing, for keyboard users) shows the source, with a
+   real link if one's on file — see the reltip-pop element + listeners
+   near the bottom of the script. */
+function relDot(c){
+  const level = REL_LABEL[c.reliability] ? c.reliability : "unverified";
+  return '<span class="reldot rel-'+level+'" tabindex="0" title="'+esc(REL_LABEL[level])+'"'
+    + ' data-rel-label="'+esc(REL_LABEL[level])+'"'
+    + ' data-rel-note="'+esc(c.sourceNote||"Not yet verified")+'"'
+    + ' data-rel-url="'+esc(c.sourceUrl||"")+'"></span>';
+}
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("on"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("on"),2100); }
-function opt(list,cur){ return list.map(o=>'<option'+(o===cur?" selected":"")+'>'+esc(o)+'</option>').join(""); }
+function opt(list,cur){
+  return list.map(o=>{
+    const pair = Array.isArray(o) ? o : [o,o];
+    return '<option value="'+esc(pair[0])+'"'+(pair[0]===cur?" selected":"")+'>'+esc(pair[1])+'</option>';
+  }).join("");
+}
 const hay = o => Object.values(o).join(" ").toLowerCase();
 
 /* ---------------- views ---------------- */
@@ -1499,7 +1535,7 @@ function vContacts(){
   <div class="page-head">
     <div>
       <h2>Contacts</h2>
-      <div class="sub">Outreach targets, the internal and grand-opening mailing list, and media contacts — all in one place. <b class="find">FIND</b> marks a gap still to close. Names are from public sources as of mid-2026: verify the person still holds the role before reaching out.</div>
+      <div class="sub">Outreach targets, the internal and grand-opening mailing list, and media contacts — all in one place. <b class="find">FIND</b> marks a gap still to close. Names are from public sources as of mid-2026: verify the person still holds the role before reaching out. The dot next to each organization shows how reliable its info is — <span class="reldot rel-verified" style="margin:0 2px"></span>verified, <span class="reldot rel-likely" style="margin:0 2px"></span>likely, <span class="reldot rel-unverified" style="margin:0 2px"></span>unverified — hover it for the source.</div>
     </div>
     <div class="page-head-actions">${xlsxDlBtn()}<button class="btn btn-p" data-new="contact">+ New contact</button></div>
   </div>
@@ -1519,7 +1555,7 @@ function vContacts(){
       <tbody>
       ${rows.map(c=>`<tr data-open="contact:${c.id}">
         <td>${pillSelect("contact",c.id,"priority",c.priority,PRIORITIES,"—")}</td>
-        <td class="tt">${esc(c.org)}<div class="sub">${esc(c.notes)}</div></td>
+        <td class="tt">${relDot(c)}${esc(c.org)}<div class="sub">${esc(c.notes)}</div></td>
         <td class="nowrap">${c.name==="FIND"?'<span class="find">FIND</span>':esc(c.name)}</td>
         <td style="font-size:12px;color:var(--muted);min-width:150px">${esc(c.title)}</td>
         <td class="nowrap mono">${c.phone==="FIND"?'<span class="find">FIND</span>':esc(c.phone)}</td>
@@ -1979,6 +2015,9 @@ function drawerHTML(kind,r){
       ${fld("Channel","channel",r.channel)}
       ${fld("Contact route / department","route",r.route)}
       ${fld("Notes","notes",r.notes,"textarea")}
+      <div class="dr-note" style="margin:2px 0 8px">How reliable is this info, and where did it come from?</div>
+      ${fld("Reliability","reliability",r.reliability||"unverified","select",[["verified","Verified"],["likely","Likely accurate"],["unverified","Unverified"]])}
+      <div class="f2">${fld("Source","sourceNote",r.sourceNote)}${fld("Source link","sourceUrl",r.sourceUrl,"url")}</div>
       ${r.email && r.email!=="FIND" && r.email.indexOf("@")>0 ? `<a class="btn" style="width:100%;justify-content:center" href="mailto:${esc(r.email.split(" ")[0])}">Email ${esc(r.name!=="FIND"&&r.name!=="—"?r.name:r.org)}</a>`:""}
     </div>` + drawerFoot();
   }
@@ -2037,7 +2076,7 @@ async function newRec(kind){
   const draft = {
     action:   {title:"New action item",detail:"",phase:"p1",category:"Local Outreach",owner:"Unassigned",due:"",priority:"Medium",status:"Not started",source:"Added manually"},
     question: {q:"New question",context:"",owedBy:"Ben",priority:"Medium",status:"Open",asked:"",answer:"",source:"Added manually"},
-    contact:  {list:"Outreach",channel:"Local Outreach",org:"New organization",route:"",name:"FIND",title:"",phone:"FIND",email:"FIND",web:"",status:"Not started",priority:"",invite:"No",notes:""},
+    contact:  {list:"Outreach",channel:"Local Outreach",org:"New organization",route:"",name:"FIND",title:"",phone:"FIND",email:"FIND",web:"",status:"Not started",priority:"",invite:"No",notes:"",reliability:"unverified",sourceNote:"",sourceUrl:""},
     org:      {tier:"Tier 2",name:"New organization",why:"",cost:"",status:"Not started",owner:"Unassigned",notes:""},
     promo:    {name:"New promotion",audience:"",detail:"",approval:"Revenue Management",status:"Idea",notes:""}
   }[kind];
@@ -2384,11 +2423,11 @@ function stampedFilename(slug,ext){
   const d=new Date(), p=n=>String(n).padStart(2,"0");
   return "danville-"+slug+"-"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"."+ext;
 }
-function colLabel(c){ return {id:"ID",q:"Question",owedBy:"Owed by",title:"Title"}[c] || c.charAt(0).toUpperCase()+c.slice(1); }
+function colLabel(c){ return {id:"ID",q:"Question",owedBy:"Owed by",title:"Title",sourceNote:"Source",sourceUrl:"Source link"}[c] || c.charAt(0).toUpperCase()+c.slice(1); }
 function currentRows(){
   if(view==="actions")   return {rows:fActions(),   cols:["id","title","detail","owner","phase","category","due","priority","status","source"], name:"action-items"};
   if(view==="questions") return {rows:fQuestions(), cols:["id","q","owedBy","status","priority","asked","context","answer","source"], name:"open-questions"};
-  if(view==="contacts")  return {rows:fContacts(),  cols:["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","notes"], name:"contacts"};
+  if(view==="contacts")  return {rows:fContacts(),  cols:["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","reliability","sourceNote","sourceUrl","notes"], name:"contacts"};
   if(view==="orgs")      return {rows:fOrgs(),      cols:["id","tier","name","cost","owner","status","why","notes"], name:"memberships"};
   if(view==="promos")    return {rows:fPromos(),    cols:["id","name","audience","approval","status","detail","notes"], name:"promotions"};
   if(view==="opening")   return {rows:S.contacts.filter(c=>c.invite==="Yes"||c.invite==="TBD"), cols:["id","channel","org","name","title","phone","email","web","invite","notes"], name:"grand-opening-invite-list"};
@@ -2429,7 +2468,7 @@ function exportPacketXLSX(){
   const sheets = [
     {name:"Action Items",    rows:sheetRows(S.actions,   ["id","title","detail","owner","phase","category","due","priority","status","source"])},
     {name:"Open Questions",  rows:sheetRows(S.questions, ["id","q","owedBy","status","priority","asked","context","answer","source"])},
-    {name:"Contacts",        rows:sheetRows(S.contacts,  ["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","notes"])},
+    {name:"Contacts",        rows:sheetRows(S.contacts,  ["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","reliability","sourceNote","sourceUrl","notes"])},
     {name:"Memberships",     rows:sheetRows(S.orgs,      ["id","tier","name","cost","owner","status","why","notes"])},
     {name:"Promotions",      rows:sheetRows(S.promos,    ["id","name","audience","approval","status","detail","notes"])},
     {name:"Milestones",      rows:sheetRows(SEED_MILESTONES, ["date","label","detail","type"])},
@@ -2646,6 +2685,27 @@ document.addEventListener("keydown",e=>{
   if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==="k"){ e.preventDefault(); $("#gsearch").focus(); $("#gsearch").select(); }
   if((e.metaKey||e.ctrlKey) && e.key==="Enter" && editing){ e.preventDefault(); saveDrawer(); }
 });
+
+/* reliability-dot tooltip — positioned in JS (not pure CSS) so it always
+   escapes the scrollable table container instead of getting clipped */
+function showRelTip(el){
+  const tip=$("#reltip");
+  const url=el.getAttribute("data-rel-url");
+  tip.innerHTML = "<b>"+esc(el.getAttribute("data-rel-label"))+"</b>"+esc(el.getAttribute("data-rel-note"))
+    + (url ? '<br><a href="'+esc(url)+'" target="_blank" rel="noopener">Source ↗</a>' : "");
+  tip.style.display="block";
+  const r=el.getBoundingClientRect(), tr=tip.getBoundingClientRect();
+  let left=r.left+r.width/2-tr.width/2;
+  left=Math.max(8, Math.min(left, window.innerWidth-tr.width-8));
+  let top=r.bottom+8;
+  if(top+tr.height > window.innerHeight-8) top=r.top-tr.height-8;
+  tip.style.left=left+"px"; tip.style.top=top+"px";
+}
+function hideRelTip(){ $("#reltip").style.display="none"; }
+document.addEventListener("mouseover",e=>{ const d=e.target.closest(".reldot"); if(d) showRelTip(d); });
+document.addEventListener("mouseout",e=>{ const d=e.target.closest(".reldot"); if(d) hideRelTip(); });
+document.addEventListener("focusin",e=>{ const d=e.target.closest(".reldot"); if(d) showRelTip(d); });
+document.addEventListener("focusout",e=>{ const d=e.target.closest(".reldot"); if(d) hideRelTip(); });
 
 /* ---------------- boot ---------------- */
 async function boot(){
