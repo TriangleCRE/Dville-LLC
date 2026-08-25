@@ -1,0 +1,150 @@
+[
+  {
+    "kind": "action",
+    "id": "A01",
+    "guard": {
+      "status": "Not started",
+      "detail": "Sarah wasn't on the Aug 20, 11:00 AM call. Dominique's email that morning said CubeSmart has supported similar local initiatives before but any discount or promotional offer needs Revenue Management review and approval — the rest of what was covered isn't captured anywhere. Several open questions below may already be settled by it."
+    },
+    "patch": {
+      "status": "Done",
+      "detail": "Dominique's 8/21 follow-up email covers it: the target date moved to 10/13/2026, CubeSmart approved opening hiring requisitions for the store team, and she sent the full telecom (Verizon)/access-control (PTI StorLogix)/camera (OpenEye) checklist plus utilities bill-sharing and reminders on bathroom fixtures/carts/dollies and the physical mailbox. See the Aug 21 email in the source library and Q01/Q04 below.",
+      "source": "Dominique's 8/20 pre-call email; meeting cadence set on the 7/23 call; readout via Dominique's 8/21 action-items email"
+    }
+  },
+  {
+    "kind": "action",
+    "id": "A04",
+    "guard": {
+      "status": "In progress",
+      "title": "Confirm Oct 6 target date holds — or push for an earlier open",
+      "detail": "Sarah's open question: now that we can't market or lease until the store is onboarded, every day earlier is a day of revenue. Ben is pushing GC Kevin and thinks we squeak in end of Sept / early Oct. Andy has ~a week of wiggle room but prefers Oct 6 on the ops side (2 hires + a trainer flown in for 7 days)."
+    },
+    "patch": {
+      "title": "Target date confirmed: October 13, 2026",
+      "detail": "Dominique's 8/21 email confirms the updated target date — 10/13/2026 — and that CubeSmart's internal teams have been notified. Andy's ~30-day final walkthrough and unit-size confirmation now lands around 9/13 (see A08).",
+      "status": "Done",
+      "source": "Sarah→Ben 7/23 email, item #2; 7/23 call transcript (00:32); confirmed via Dominique's 8/21 action-items email"
+    }
+  },
+  {
+    "kind": "action",
+    "id": "A06",
+    "guard": {
+      "title": "Lock in Jill's offer: full opening collateral designed + approved BEFORE Oct 6"
+    },
+    "patch": {
+      "title": "Lock in Jill's offer: full opening collateral designed + approved BEFORE Oct 13"
+    }
+  },
+  {
+    "kind": "action",
+    "id": "A08",
+    "guard": {
+      "due": "2026-09-06",
+      "detail": "Andy performs the final walkthrough and confirms unit sizes ~30 days before target date. Only then do Revenue Management and the Relationship Manager set final pricing — which is what our promo conversations depend on. Also tell Dominique when unit numbers are ordered and when they're installed."
+    },
+    "patch": {
+      "due": "2026-09-13",
+      "detail": "Andy performs the final walkthrough and confirms unit sizes ~30 days before target date. Only then do Revenue Management and the Relationship Manager set final pricing — which is what our promo conversations depend on. Also tell Dominique when unit numbers are ordered and when they're installed — Dominique will schedule Andy's walkthrough once she hears they're installed.",
+      "source": "Dominique 7/23 action items email — Unit Numbers; due date updated per Dominique's 8/21 email"
+    }
+  },
+  {
+    "kind": "action",
+    "id": "A09",
+    "guard": {
+      "detail": "The store is already listed with a pre-book form (it went up early because the date moved). Check the map pin, address, hours and any feature callouts now, while there's time to correct them. On Oct 6 the page flips to live reservations."
+    },
+    "patch": {
+      "detail": "The store is already listed with a pre-book form (it went up early because the date moved). Check the map pin, address, hours and any feature callouts now, while there's time to correct them. On Oct 13 the page flips to live reservations."
+    }
+  },
+  {
+    "kind": "action",
+    "id": "A11",
+    "guard": {
+      "title": "Get Lynette's last name, email and phone; ask for an intro before Oct 6"
+    },
+    "patch": {
+      "title": "Get Lynette's last name, email and phone; ask for an intro before Oct 13"
+    }
+  },
+  {
+    "kind": "action",
+    "id": "A21",
+    "guard": {
+      "detail": "CubeSmart does not issue releases or provide quotes for managed stores, but will review drafts. We can state the facility is “professionally managed by CubeSmart Self Storage.” Find out who reviews and how long it takes so it doesn't hold up the Oct 6 release."
+    },
+    "patch": {
+      "detail": "CubeSmart does not issue releases or provide quotes for managed stores, but will review drafts. We can state the facility is “professionally managed by CubeSmart Self Storage.” Find out who reviews and how long it takes so it doesn't hold up the Oct 13 release."
+    }
+  },
+  {
+    "kind": "action",
+    "id": "F02",
+    "guard": {
+      "detail": "Build in lead time. Get it back approved before Oct 6 so it can go out the day we open rather than a week later."
+    },
+    "patch": {
+      "detail": "Build in lead time. Get it back approved before Oct 13 so it can go out the day we open rather than a week later."
+    }
+  },
+  {
+    "kind": "question",
+    "id": "Q01",
+    "guard": {
+      "status": "Open",
+      "answer": ""
+    },
+    "patch": {
+      "status": "Answered",
+      "context": "Sarah wasn't on this call, so there were no notes on file. Dominique sent a marketing update that morning saying Revenue Management has to approve any discount or promotional offer, but the rest of the call was unrecorded. Several questions below were half-answered by it.",
+      "answer": "Dominique's 8/21 follow-up email: target date moved to 10/13/2026 (internal teams notified), CubeSmart approved opening hiring requisitions for the store team, plus the telecom (Verizon)/access-control (PTI StorLogix)/camera (OpenEye) checklists, utilities bill-sharing once permanent power/water is in, and reminders on bathroom fixtures/carts/dollies (new vendor: Rebecca Gessler, Professional Supply) and the physical mailbox. Next call is 9/3.",
+      "source": "Dominique 8/20 email; meeting cadence from 7/23 call; answered via Dominique's 8/21 action-items email"
+    }
+  },
+  {
+    "kind": "question",
+    "id": "Q04",
+    "guard": {
+      "status": "Open",
+      "answer": ""
+    },
+    "patch": {
+      "status": "Answered",
+      "answer": "Updated to 10/13/2026 per Dominique's 8/21 email — CubeSmart has notified their internal teams.",
+      "source": "Sarah→Ben 7/23 email item #2; 7/23 call transcript; answered via Dominique's 8/21 action-items email"
+    }
+  },
+  {
+    "kind": "question",
+    "id": "Q08",
+    "guard": {
+      "q": "What is Lynette's last name, and can we meet her before Oct 6?"
+    },
+    "patch": {
+      "q": "What is Lynette's last name, and can we meet her before Oct 13?"
+    }
+  },
+  {
+    "kind": "question",
+    "id": "Q12",
+    "guard": {
+      "context": "CubeSmart can launch one around the 30-day mark for additional budget. With an Extra Space store a mile away and no pre-open leasing allowed, this may be the only way to build any awareness before Oct 6."
+    },
+    "patch": {
+      "context": "CubeSmart can launch one around the 30-day mark for additional budget. With an Extra Space store a mile away and no pre-open leasing allowed, this may be the only way to build any awareness before Oct 13."
+    }
+  },
+  {
+    "kind": "question",
+    "id": "Q19",
+    "guard": {
+      "context": "They'll review a draft but won't issue it or be quoted. If review takes two weeks we need to submit in mid-September to have it approved for an Oct 6 release."
+    },
+    "patch": {
+      "context": "They'll review a draft but won't issue it or be quoted. If review takes two weeks we need to submit in mid-September to have it approved for an Oct 13 release."
+    }
+  }
+]
