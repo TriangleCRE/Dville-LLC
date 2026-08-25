@@ -2687,8 +2687,12 @@ document.addEventListener("keydown",e=>{
 });
 
 /* reliability-dot tooltip — positioned in JS (not pure CSS) so it always
-   escapes the scrollable table container instead of getting clipped */
+   escapes the scrollable table container instead of getting clipped.
+   Hiding is delayed a beat so moving the mouse from the dot onto the
+   popup itself (to click the source link) doesn't close it first. */
+let relHideTimer=null;
 function showRelTip(el){
+  clearTimeout(relHideTimer);
   const tip=$("#reltip");
   const url=el.getAttribute("data-rel-url");
   tip.innerHTML = "<b>"+esc(el.getAttribute("data-rel-label"))+"</b>"+esc(el.getAttribute("data-rel-note"))
@@ -2701,11 +2705,26 @@ function showRelTip(el){
   if(top+tr.height > window.innerHeight-8) top=r.top-tr.height-8;
   tip.style.left=left+"px"; tip.style.top=top+"px";
 }
-function hideRelTip(){ $("#reltip").style.display="none"; }
-document.addEventListener("mouseover",e=>{ const d=e.target.closest(".reldot"); if(d) showRelTip(d); });
-document.addEventListener("mouseout",e=>{ const d=e.target.closest(".reldot"); if(d) hideRelTip(); });
-document.addEventListener("focusin",e=>{ const d=e.target.closest(".reldot"); if(d) showRelTip(d); });
-document.addEventListener("focusout",e=>{ const d=e.target.closest(".reldot"); if(d) hideRelTip(); });
+function scheduleHideRelTip(){
+  clearTimeout(relHideTimer);
+  relHideTimer=setTimeout(()=>{ $("#reltip").style.display="none"; },250);
+}
+document.addEventListener("mouseover",e=>{
+  const d=e.target.closest(".reldot");
+  if(d){ showRelTip(d); return; }
+  if(e.target.closest("#reltip")) clearTimeout(relHideTimer);
+});
+document.addEventListener("mouseout",e=>{
+  if(e.target.closest(".reldot") || e.target.closest("#reltip")) scheduleHideRelTip();
+});
+document.addEventListener("focusin",e=>{
+  const d=e.target.closest(".reldot");
+  if(d){ showRelTip(d); return; }
+  if(e.target.closest("#reltip")) clearTimeout(relHideTimer);
+});
+document.addEventListener("focusout",e=>{
+  if(e.target.closest(".reldot") || e.target.closest("#reltip")) scheduleHideRelTip();
+});
 
 /* ---------------- boot ---------------- */
 async function boot(){
