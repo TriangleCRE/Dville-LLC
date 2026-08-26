@@ -1602,7 +1602,7 @@ function vContacts(){
         <td class="nowrap mono">${c.phone==="FIND"?'<span class="find">FIND</span>':esc(c.phone)}</td>
         <td class="mono" style="min-width:150px;word-break:break-all">${c.email==="FIND"?'<span class="find">FIND</span>':esc(c.email)}</td>
         <td class="nowrap" style="font-size:12px;color:var(--muted)">${esc(c.channel)}</td>
-        <td>${pill(c.status)}</td>
+        <td>${pillSelect("contact",c.id,"status",c.status,C_STATUS)}</td>
         <td class="nowrap">${quickDate("contact",c.id,"outreachDate",c.outreachDate)}</td>
         <td>${pillSelect("contact",c.id,"outreachStatus",c.outreachStatus,OUTREACH_STATUS)}</td>
       </tr>`).join("") || `<tr><td colspan="10"><div class="empty"><b>No matching contacts</b>Try clearing the filters.</div></td></tr>`}
