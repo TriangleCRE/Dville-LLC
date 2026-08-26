@@ -146,5 +146,25 @@
     "patch": {
       "context": "They'll review a draft but won't issue it or be quoted. If review takes two weeks we need to submit in mid-September to have it approved for an Oct 13 release."
     }
+  },
+  {
+    "kind": "contact",
+    "id": "K04",
+    "guard": {
+      "notes": "PRIMARY CONTACT UNTIL OCT 6. Runs the monthly check-in calls and the onboarding checklist. Hands off to Lynette on the onboarding date."
+    },
+    "patch": {
+      "notes": "PRIMARY CONTACT UNTIL OCT 13. Runs the monthly check-in calls and the onboarding checklist. Hands off to Lynette on the onboarding date."
+    }
+  },
+  {
+    "kind": "contact",
+    "id": "K06",
+    "guard": {
+      "notes": "BECOMES THE MAIN CONTACT ON OCT 6. Everything marketing runs through her: campaigns, promo codes, direct mail, collateral, local partnerships. Ask Dominique for an early intro."
+    },
+    "patch": {
+      "notes": "BECOMES THE MAIN CONTACT ON OCT 13. Everything marketing runs through her: campaigns, promo codes, direct mail, collateral, local partnerships. Ask Dominique for an early intro."
+    }
   }
 ]

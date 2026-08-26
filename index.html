@@ -335,6 +335,14 @@ select.pill-edit{
 select.pill-edit:hover{filter:brightness(.97)}
 select.pill-edit:focus{outline:2px solid rgba(34,99,143,.3); outline-offset:1px}
 
+/* inline-editable date — used for logging the last outreach attempt right in the row */
+input.date-edit{
+  font-family:inherit; font-size:11.5px; color:var(--ink); cursor:pointer;
+  border:1px solid var(--line); border-radius:6px; padding:2px 6px; background:var(--card); line-height:1.6;
+}
+input.date-edit:hover{border-color:var(--muted)}
+input.date-edit:focus{outline:2px solid rgba(34,99,143,.3); outline-offset:1px}
+
 /* reliability dot — how trustworthy a record's contact info is, with a
    hover/focus tooltip (JS-positioned, see reltip-pop) naming the source */
 .reldot{
@@ -754,6 +762,10 @@ const catClass = c => "cat-" + (CAT_COLOR[c] || "in");
 const M_STATUS    = ["Not started","Application in progress","Submitted","Member","Declined"];
 const P_STATUS    = ["Idea","Proposed","In discussion","Awaiting ruling","Expected","Approved","Declined"];
 const INVITE      = ["Yes","TBD","No"];
+/* Has anyone actually tried this contact yet, and where did it land — separate
+   from C_STATUS above, which tracks the overall relationship rather than the
+   single most recent outreach attempt. */
+const OUTREACH_STATUS = ["Not contacted","Awaiting reply","Responded","No response"];
 
 const TONE = {
   "Done":"p-green","In progress":"p-blue","Waiting on others":"p-amber","Blocked":"p-red","Not started":"p-slate",
@@ -762,7 +774,8 @@ const TONE = {
   "Open":"p-amber","Partially answered":"p-blue","Answered":"p-green","Closed":"p-slate",
   "Application in progress":"p-blue","Submitted":"p-violet","Member":"p-green",
   "Idea":"p-slate","Proposed":"p-blue","Awaiting ruling":"p-amber","Expected":"p-violet","Approved":"p-green",
-  "Yes":"p-green","TBD":"p-amber","No":"p-slate"
+  "Yes":"p-green","TBD":"p-amber","No":"p-slate",
+  "Not contacted":"p-slate","Awaiting reply":"p-amber","Responded":"p-green","No response":"p-red"
 };
 const tone = v => TONE[v] || "p-slate";
 
@@ -835,6 +848,12 @@ function pillSelect(kind,id,field,value,options,placeholder){
   const body = opts.map(([v,l])=>'<option value="'+esc(v)+'"'+(v===(value||"")?" selected":"")+'>'+esc(l)+'</option>').join("");
   return '<select class="pill-edit '+tone(value)+'" data-quickfield="'+esc(kind)+':'+esc(id)+':'+esc(field)+'">'+body+'</select>';
 }
+/* Same idea as pillSelect() but a real <input type="date"> — for logging
+   when a contact was last reached out to right from the table row. Reuses
+   the same [data-quickfield] change handler, so no extra wiring needed. */
+function quickDate(kind,id,field,value){
+  return '<input type="date" class="date-edit" data-quickfield="'+esc(kind)+':'+esc(id)+':'+esc(field)+'" value="'+esc(value||"")+'">';
+}
 const REL_LABEL = {verified:"Verified", likely:"Likely accurate", unverified:"Unverified"};
 /* Small green/amber/red dot showing how reliable a record's contact info
    is. Hovering (or focusing, for keyboard users) shows the source, with a
@@ -873,12 +892,14 @@ let view = "overview";
 let q = "";
 const F = {
   actions:{owner:"",phase:"",category:"",status:"",priority:"",hide:"all",special:""},
-  contacts:{list:"",channel:"",status:"",priority:""},
+  contacts:{list:"",channel:"",status:"",priority:"",outreach:""},
   questions:{owed:"",status:"open"},
   orgs:{tier:"",status:""},
   promos:{status:""}
 };
-const SORT = { actions:{k:"due",d:1}, contacts:{k:"org",d:1}, orgs:{k:"tier",d:1}, promos:{k:"id",d:1} };
+/* Contacts default to highest-priority-first, and within a priority level,
+   the contact info we trust most first — see sortRows()'s "contacts" case. */
+const SORT = { actions:{k:"due",d:1}, contacts:{k:"priority",d:1}, orgs:{k:"tier",d:1}, promos:{k:"id",d:1} };
 
 /* ---------------- filtering ---------------- */
 function fActions(){
@@ -905,6 +926,7 @@ function fContacts(){
     if(f.channel && c.channel!==f.channel) return false;
     if(f.status && c.status!==f.status) return false;
     if(f.priority && c.priority!==f.priority) return false;
+    if(f.outreach && (c.outreachStatus||"Not contacted")!==f.outreach) return false;
     if(q && hay(c).indexOf(q)<0) return false;
     return true;
   });
@@ -942,6 +964,7 @@ function fPromos(){
 function sortRows(rows,key){
   const s=SORT[key]; if(!s) return rows;
   const rank={High:0,Medium:1,Low:2};
+  const relRank={verified:0,likely:1,unverified:2};
   return rows.slice().sort((a,b)=>{
     if(key==="actions"){
       // a completed item floats to the top of whatever section it's in
@@ -950,12 +973,21 @@ function sortRows(rows,key){
       if(ad!==bd) return ad-bd;
     }
     let x=a[s.k], y=b[s.k];
-    if(s.k==="priority"){ x=rank[x]; y=rank[y]; }
+    if(s.k==="priority"){ x=rank[x]; x=(x==null?3:x); y=rank[y]; y=(y==null?3:y); }
     if(s.k==="due"){ x = x||"9999-99-99"; y = y||"9999-99-99"; }
     x=(x==null?"":x); y=(y==null?"":y);
     if(typeof x==="string") x=x.toLowerCase();
     if(typeof y==="string") y=y.toLowerCase();
-    return (x<y?-1:x>y?1:0)*s.d;
+    const primary=(x<y?-1:x>y?1:0)*s.d;
+    if(primary!==0) return primary;
+    // tie-break, contacts only: within the same priority level, sort by
+    // whichever contact's info we trust more (verified first) — a fixed
+    // convention independent of which way Priority itself is sorted
+    if(key==="contacts" && s.k==="priority"){
+      const ar=relRank[a.reliability], br=relRank[b.reliability];
+      return (ar==null?3:ar) - (br==null?3:br);
+    }
+    return 0;
   });
 }
 function toggleSort(key,col){
@@ -1543,7 +1575,7 @@ function vContacts(){
   <div class="page-head">
     <div>
       <h2>Contacts</h2>
-      <div class="sub">Outreach targets, the internal and grand-opening mailing list, and media contacts — all in one place. <b class="find">FIND</b> marks a gap still to close. Names are from public sources as of mid-2026: verify the person still holds the role before reaching out. The dot next to each organization shows how reliable its info is — <span class="reldot rel-verified" style="margin:0 2px"></span>verified, <span class="reldot rel-likely" style="margin:0 2px"></span>likely, <span class="reldot rel-unverified" style="margin:0 2px"></span>unverified — hover it for the source.</div>
+      <div class="sub">Outreach targets, the internal and grand-opening mailing list, and media contacts — all in one place. <b class="find">FIND</b> marks a gap still to close. Names are from public sources as of mid-2026: verify the person still holds the role before reaching out. The dot next to each organization shows how reliable its info is — <span class="reldot rel-verified" style="margin:0 2px"></span>verified, <span class="reldot rel-likely" style="margin:0 2px"></span>likely, <span class="reldot rel-unverified" style="margin:0 2px"></span>unverified — hover it for the source. Sorted by priority, then by how reliable the info is, by default. Log a call or email right in the row with <b>Last contact</b> and <b>Response</b>.</div>
     </div>
     <div class="page-head-actions">${xlsxDlBtn()}<button class="btn btn-p" data-new="contact">+ New contact</button></div>
   </div>
@@ -1552,6 +1584,7 @@ function vContacts(){
     ${sel("contacts","channel","Channel",chans.map(c=>[c,c]),f.channel,"All channels")}
     ${sel("contacts","status","Status",C_STATUS.map(s=>[s,s]),f.status,"Any status")}
     ${sel("contacts","priority","Priority",PRIORITIES.map(p=>[p,p]),f.priority,"Any priority")}
+    ${sel("contacts","outreach","Outreach",OUTREACH_STATUS.map(o=>[o,o]),f.outreach,"Any outreach status")}
     <div class="chip-clear">
       <span class="count-note">${rows.length} of ${S.contacts.length}${gaps?" · "+gaps+" with gaps":""}</span>
       <button class="btn btn-sm" data-clear="contacts">Clear filters</button>
@@ -1559,7 +1592,7 @@ function vContacts(){
   </div>
   <div class="tablewrap">
     <table>
-      <thead><tr>${th("priority","Priority")}${th("org","Organization")}${th("name","Contact")}${th("title","Role")}${th("phone","Phone")}${th("email","Email")}${th("channel","Channel")}${th("status","Status")}</tr></thead>
+      <thead><tr>${th("priority","Priority")}${th("org","Organization")}${th("name","Contact")}${th("title","Role")}${th("phone","Phone")}${th("email","Email")}${th("channel","Channel")}${th("status","Status")}${th("outreachDate","Last contact")}${th("outreachStatus","Response")}</tr></thead>
       <tbody>
       ${rows.map(c=>`<tr data-open="contact:${c.id}">
         <td>${pillSelect("contact",c.id,"priority",c.priority,PRIORITIES,"—")}</td>
@@ -1570,7 +1603,9 @@ function vContacts(){
         <td class="mono" style="min-width:150px;word-break:break-all">${c.email==="FIND"?'<span class="find">FIND</span>':esc(c.email)}</td>
         <td class="nowrap" style="font-size:12px;color:var(--muted)">${esc(c.channel)}</td>
         <td>${pill(c.status)}</td>
-      </tr>`).join("") || `<tr><td colspan="8"><div class="empty"><b>No matching contacts</b>Try clearing the filters.</div></td></tr>`}
+        <td class="nowrap">${quickDate("contact",c.id,"outreachDate",c.outreachDate)}</td>
+        <td>${pillSelect("contact",c.id,"outreachStatus",c.outreachStatus,OUTREACH_STATUS)}</td>
+      </tr>`).join("") || `<tr><td colspan="10"><div class="empty"><b>No matching contacts</b>Try clearing the filters.</div></td></tr>`}
       </tbody>
     </table>
   </div>`;
@@ -2023,6 +2058,8 @@ function drawerHTML(kind,r){
       <div class="f2">${fld("Priority to reach out to","priority",r.priority,"select",["",...PRIORITIES])}${fld("Invite to grand opening?","invite",r.invite,"select",INVITE)}</div>
       ${fld("Channel","channel",r.channel)}
       ${fld("Contact route / department","route",r.route)}
+      <div class="dr-note" style="margin:2px 0 8px">Have we actually reached out, and what happened?</div>
+      <div class="f2">${fld("Last contact date","outreachDate",r.outreachDate,"date")}${fld("Response","outreachStatus",r.outreachStatus||"Not contacted","select",OUTREACH_STATUS)}</div>
       ${fld("Notes","notes",r.notes,"textarea")}
       <div class="dr-note" style="margin:2px 0 8px">How reliable is this info, and where did it come from?</div>
       ${fld("Reliability","reliability",r.reliability||"unverified","select",[["verified","Verified"],["likely","Likely accurate"],["unverified","Unverified"]])}
@@ -2085,7 +2122,7 @@ async function newRec(kind){
   const draft = {
     action:   {title:"New action item",detail:"",phase:"p1",category:"Local Outreach",owner:"Unassigned",due:"",priority:"Medium",status:"Not started",source:"Added manually"},
     question: {q:"New question",context:"",owedBy:"Ben",priority:"Medium",status:"Open",asked:"",answer:"",source:"Added manually"},
-    contact:  {list:"Outreach",channel:"Local Outreach",org:"New organization",route:"",name:"FIND",title:"",phone:"FIND",email:"FIND",web:"",status:"Not started",priority:"",invite:"No",notes:"",reliability:"unverified",sourceNote:"",sourceUrl:""},
+    contact:  {list:"Outreach",channel:"Local Outreach",org:"New organization",route:"",name:"FIND",title:"",phone:"FIND",email:"FIND",web:"",status:"Not started",priority:"",invite:"No",notes:"",reliability:"unverified",sourceNote:"",sourceUrl:"",outreachStatus:"",outreachDate:""},
     org:      {tier:"Tier 2",name:"New organization",why:"",cost:"",status:"Not started",owner:"Unassigned",notes:""},
     promo:    {name:"New promotion",audience:"",detail:"",approval:"Revenue Management",status:"Idea",notes:""}
   }[kind];
@@ -2432,11 +2469,11 @@ function stampedFilename(slug,ext){
   const d=new Date(), p=n=>String(n).padStart(2,"0");
   return "danville-"+slug+"-"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+"."+ext;
 }
-function colLabel(c){ return {id:"ID",q:"Question",owedBy:"Owed by",title:"Title",sourceNote:"Source",sourceUrl:"Source link"}[c] || c.charAt(0).toUpperCase()+c.slice(1); }
+function colLabel(c){ return {id:"ID",q:"Question",owedBy:"Owed by",title:"Title",sourceNote:"Source",sourceUrl:"Source link",outreachStatus:"Response",outreachDate:"Last contact date"}[c] || c.charAt(0).toUpperCase()+c.slice(1); }
 function currentRows(){
   if(view==="actions")   return {rows:fActions(),   cols:["id","title","detail","owner","phase","category","due","priority","status","source"], name:"action-items"};
   if(view==="questions") return {rows:fQuestions(), cols:["id","q","owedBy","status","priority","asked","context","answer","source"], name:"open-questions"};
-  if(view==="contacts")  return {rows:fContacts(),  cols:["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","reliability","sourceNote","sourceUrl","notes"], name:"contacts"};
+  if(view==="contacts")  return {rows:fContacts(),  cols:["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","outreachDate","outreachStatus","reliability","sourceNote","sourceUrl","notes"], name:"contacts"};
   if(view==="orgs")      return {rows:fOrgs(),      cols:["id","tier","name","cost","owner","status","why","notes"], name:"memberships"};
   if(view==="promos")    return {rows:fPromos(),    cols:["id","name","audience","approval","status","detail","notes"], name:"promotions"};
   if(view==="opening")   return {rows:S.contacts.filter(c=>c.invite==="Yes"||c.invite==="TBD"), cols:["id","channel","org","name","title","phone","email","web","invite","notes"], name:"grand-opening-invite-list"};
@@ -2477,7 +2514,7 @@ function exportPacketXLSX(){
   const sheets = [
     {name:"Action Items",    rows:sheetRows(S.actions,   ["id","title","detail","owner","phase","category","due","priority","status","source"])},
     {name:"Open Questions",  rows:sheetRows(S.questions, ["id","q","owedBy","status","priority","asked","context","answer","source"])},
-    {name:"Contacts",        rows:sheetRows(S.contacts,  ["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","reliability","sourceNote","sourceUrl","notes"])},
+    {name:"Contacts",        rows:sheetRows(S.contacts,  ["id","priority","list","channel","org","route","name","title","phone","email","web","status","invite","outreachDate","outreachStatus","reliability","sourceNote","sourceUrl","notes"])},
     {name:"Memberships",     rows:sheetRows(S.orgs,      ["id","tier","name","cost","owner","status","why","notes"])},
     {name:"Promotions",      rows:sheetRows(S.promos,    ["id","name","audience","approval","status","detail","notes"])},
     {name:"Milestones",      rows:sheetRows(SEED_MILESTONES, ["date","label","detail","type"])},
@@ -2575,7 +2612,7 @@ document.addEventListener("click",e=>{
     e.preventDefault();
     const g=clear.getAttribute("data-clear");
     if(g==="actions") F.actions={owner:"",phase:"",category:"",status:"",priority:"",hide:"all",special:""};
-    if(g==="contacts") F.contacts={list:"",channel:"",status:"",priority:""};
+    if(g==="contacts") F.contacts={list:"",channel:"",status:"",priority:"",outreach:""};
     if(g==="questions") F.questions={owed:"",status:"open"};
     if(g==="orgs") F.orgs={tier:"",status:""};
     if(g==="promos") F.promos={status:""};
