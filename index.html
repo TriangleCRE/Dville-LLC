@@ -766,9 +766,16 @@ const INVITE      = ["Yes","TBD","No"];
    from C_STATUS above, which tracks the overall relationship rather than the
    single most recent outreach attempt. */
 const OUTREACH_STATUS = ["Not contacted","Awaiting reply","Responded","No response"];
-/* Who on the Triangle side takes the lead on this specific contact — Ben's
-   ask, so it's just the two of them rather than the fuller OWNERS list. */
+/* Who on the Triangle side takes the lead on this specific contact — Ben and
+   Sarah by default, but anyone can add another name (see pocNames() below,
+   and the "+ Other…" option it appends for the row dropdown). */
 const INTERNAL_POC = ["Sarah","Ben"];
+/* Every name currently in use as a POC, plus the two defaults, so someone
+   Ben added by hand shows up as a normal option everywhere else too. */
+function pocNames(){
+  const used = S.contacts.map(c=>c.internalPOC).filter(Boolean);
+  return Array.from(new Set([...INTERNAL_POC, ...used])).sort((a,b)=>a.localeCompare(b));
+}
 
 const TONE = {
   "Done":"p-green","In progress":"p-blue","Waiting on others":"p-amber","Blocked":"p-red","Not started":"p-slate",
@@ -1579,7 +1586,7 @@ function vContacts(){
   <div class="page-head">
     <div>
       <h2>Contacts</h2>
-      <div class="sub">Outreach targets, the internal and grand-opening mailing list, and media contacts — all in one place. <b class="find">FIND</b> marks a gap still to close. Names are from public sources as of mid-2026: verify the person still holds the role before reaching out. The dot next to each organization shows how reliable its info is — <span class="reldot rel-verified" style="margin:0 2px"></span>verified, <span class="reldot rel-likely" style="margin:0 2px"></span>likely, <span class="reldot rel-unverified" style="margin:0 2px"></span>unverified — hover it for the source. Sorted by priority, then by how reliable the info is, by default. Log a call or email right in the row with <b>Last contact</b> and <b>Response</b>, and set <b>Internal POC</b> to Sarah or Ben so it's clear who takes the lead.</div>
+      <div class="sub">Outreach targets, the internal and grand-opening mailing list, and media contacts — all in one place. <b class="find">FIND</b> marks a gap still to close. Names are from public sources as of mid-2026: verify the person still holds the role before reaching out. The dot next to each organization shows how reliable its info is — <span class="reldot rel-verified" style="margin:0 2px"></span>verified, <span class="reldot rel-likely" style="margin:0 2px"></span>likely, <span class="reldot rel-unverified" style="margin:0 2px"></span>unverified — hover it for the source. Sorted by priority, then by how reliable the info is, by default. Log a call or email right in the row with <b>Last contact</b> and <b>Response</b>, and set <b>Internal POC</b> to whoever takes the lead — pick Sarah or Ben, or choose "+ Other…" to add someone else.</div>
     </div>
     <div class="page-head-actions">${xlsxDlBtn()}<button class="btn btn-p" data-new="contact">+ New contact</button></div>
   </div>
@@ -1589,7 +1596,7 @@ function vContacts(){
     ${sel("contacts","status","Status",C_STATUS.map(s=>[s,s]),f.status,"Any status")}
     ${sel("contacts","priority","Priority",PRIORITIES.map(p=>[p,p]),f.priority,"Any priority")}
     ${sel("contacts","outreach","Outreach",OUTREACH_STATUS.map(o=>[o,o]),f.outreach,"Any outreach status")}
-    ${sel("contacts","poc","Internal POC",INTERNAL_POC.map(p=>[p,p]),f.poc,"Anyone")}
+    ${sel("contacts","poc","Internal POC",pocNames().map(p=>[p,p]),f.poc,"Anyone")}
     <div class="chip-clear">
       <span class="count-note">${rows.length} of ${S.contacts.length}${gaps?" · "+gaps+" with gaps":""}</span>
       <button class="btn btn-sm" data-clear="contacts">Clear filters</button>
@@ -1601,7 +1608,7 @@ function vContacts(){
       <tbody>
       ${rows.map(c=>`<tr data-open="contact:${c.id}">
         <td>${pillSelect("contact",c.id,"priority",c.priority,PRIORITIES,"—")}</td>
-        <td>${pillSelect("contact",c.id,"internalPOC",c.internalPOC,INTERNAL_POC,"—")}</td>
+        <td>${pillSelect("contact",c.id,"internalPOC",c.internalPOC,[...pocNames(),["__other__","+ Other…"]],"—")}</td>
         <td class="tt">${relDot(c)}${esc(c.org)}<div class="sub">${esc(c.notes)}</div></td>
         <td class="nowrap">${c.name==="FIND"?'<span class="find">FIND</span>':esc(c.name)}</td>
         <td style="font-size:12px;color:var(--muted);min-width:150px">${esc(c.title)}</td>
@@ -2012,6 +2019,10 @@ function fld(label,key,value,type,options,note){
   if(type==="select") return `<div class="field"><label>${esc(label)}</label><select data-f="${key}">${opt(options,v)}</select></div>`;
   if(type==="textarea") return `<div class="field"><label>${esc(label)}</label><textarea data-f="${key}">${esc(v)}</textarea></div>`;
   if(type==="ro") return `<div class="field"><label>${esc(label)}</label><div class="ro">${esc(v)||"—"}</div></div>`;
+  /* combo: a normal text input with a <datalist> of suggestions — pick one or
+     type anyone else's name, unlike "select" which only allows the list. */
+  if(type==="combo") return `<div class="field"><label>${esc(label)}</label><input data-f="${key}" list="dl-${key}" value="${esc(v)}">`
+       + `<datalist id="dl-${key}">${(options||[]).map(o=>{const p=Array.isArray(o)?o:[o,o]; return '<option value="'+esc(p[0])+'">';}).join("")}</datalist></div>`;
   return `<div class="field"><label>${esc(label)}</label><input data-f="${key}" type="${type||"text"}" value="${esc(v)}"></div>`
        + (note?`<div class="dr-note">${esc(note)}</div>`:"");
 }
@@ -2062,7 +2073,7 @@ function drawerHTML(kind,r){
       ${fld("Website / address","web",r.web)}
       <div class="f2">${fld("List","list",r.list,"select",["Outreach","Internal & Invites","Media & Advertising"])}${fld("Status","status",r.status,"select",C_STATUS)}</div>
       <div class="f2">${fld("Priority to reach out to","priority",r.priority,"select",["",...PRIORITIES])}${fld("Invite to grand opening?","invite",r.invite,"select",INVITE)}</div>
-      ${fld("Internal POC — who takes the lead","internalPOC",r.internalPOC,"select",["",...INTERNAL_POC])}
+      ${fld("Internal POC — who takes the lead","internalPOC",r.internalPOC,"combo",pocNames())}
       ${fld("Channel","channel",r.channel)}
       ${fld("Contact route / department","route",r.route)}
       <div class="dr-note" style="margin:2px 0 8px">Have we actually reached out, and what happened?</div>
@@ -2717,6 +2728,13 @@ document.addEventListener("change",e=>{
   const qf=e.target.closest("[data-quickfield]");
   if(qf){
     const [kind,id,field]=qf.getAttribute("data-quickfield").split(":");
+    if(qf.value==="__other__"){
+      // "+ Other…" in the row dropdown — ask for the name instead of saving the sentinel value
+      const name=(prompt("Who's the internal POC for this contact?")||"").trim();
+      if(name) quickUpdate(kind,id,field,name);
+      else render(); // cancelled — put the dropdown back to what's actually saved
+      return;
+    }
     quickUpdate(kind,id,field,qf.value);
     return;
   }
