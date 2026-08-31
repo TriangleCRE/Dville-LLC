@@ -7,6 +7,7 @@ const { Pool } = require("pg");
 const seedData = require("./seedData");
 const contactMetadata = require("./contactMetadata.json");
 const aug21Patches = require("./aug21Patches.json");
+const contactRemovals = require("./contactRemovals.json");
 
 function getConnectionString() {
   return (
@@ -169,6 +170,24 @@ async function applyAug21Update(db) {
   }
 }
 
+/* Records someone decided shouldn't be in the dashboard at all (e.g. Thomas
+   the contact — an owner of Triangle, not an outreach target). A fresh
+   install just never seeds them (removed from seedData.js); an already-
+   seeded database needs them deleted explicitly. Only ever deletes a row
+   whose content still matches its guard exactly — so a record someone has
+   since edited (a real phone number found, a note added) is left alone for
+   a person to remove by hand instead of being silently discarded. */
+async function applyContactRemovals(db) {
+  for (const r of contactRemovals) {
+    const { rows } = await db.query("SELECT data FROM records WHERE kind=$1 AND record_id=$2", [r.kind, r.id]);
+    if (!rows.length) continue; // already gone, or never existed on this database
+    const data = rows[0].data;
+    const guardOk = Object.entries(r.guard).every(([field, value]) => (data[field] ?? "") === value);
+    if (!guardOk) continue;
+    await db.query("DELETE FROM records WHERE kind=$1 AND record_id=$2", [r.kind, r.id]);
+  }
+}
+
 async function withTransaction(pool, fn) {
   const client = await pool.connect();
   try {
@@ -209,6 +228,9 @@ function ensureReady(pool) {
       // handful of records it introduced and guard-patches the few it
       // resolved, without ever touching a record a user has since edited.
       await applyAug21Update(pool);
+      // And for records that shouldn't be in the dashboard at all — see
+      // contactRemovals.json. Guarded the same way, so a real edit wins.
+      await applyContactRemovals(pool);
     })().catch((err) => {
       readyPromise = null;
       throw err;
@@ -227,6 +249,7 @@ module.exports = {
   ensureReady,
   backfillContactMetadata,
   applyAug21Update,
+  applyContactRemovals,
   withTransaction,
   PREFIX,
   KIND_TO_LIST,

@@ -1,0 +1,24 @@
+[
+  {
+    "kind": "contact",
+    "id": "K14",
+    "guard": {
+      "list": "Internal & Invites",
+      "channel": "Advisors",
+      "org": "Thomas",
+      "route": "Informal advisor",
+      "name": "Thomas",
+      "title": "Advisor — Sarah's father",
+      "phone": "FIND",
+      "email": "FIND",
+      "web": "—",
+      "status": "Contact found",
+      "invite": "TBD",
+      "priority": "Medium",
+      "reliability": "unverified",
+      "sourceNote": "Not yet found — needs research",
+      "sourceUrl": "",
+      "notes": "Two open questions are pointed at him: whether the Rotary Club of Danville is worth joining, and his grassroots-marketing playbook for hotels, which may transfer to a new storage facility. Worth handling as one conversation."
+    }
+  }
+]
